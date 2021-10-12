@@ -1,0 +1,12 @@
+flask
+jsonify
+requests
+gunicorn>=20.0.4
+pymysql
+flask_cors
+flask_sqlalchemy
+mysql-connector-python
+flask_ngrok
+flask_swagger_ui
+python-logstash
+elasticsearch
