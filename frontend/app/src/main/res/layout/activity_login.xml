@@ -29,6 +29,7 @@
         android:importantForAutofill="no"
         android:inputType="textPassword"
         android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="@+id/userID"
         app:layout_constraintStart_toStartOf="@+id/userID"
         app:layout_constraintTop_toBottomOf="@+id/userID" />
 
@@ -76,4 +77,5 @@
         android:text="@string/autoLogin"
         app:layout_constraintEnd_toEndOf="@+id/joinButton"
         app:layout_constraintTop_toBottomOf="@+id/joinButton" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

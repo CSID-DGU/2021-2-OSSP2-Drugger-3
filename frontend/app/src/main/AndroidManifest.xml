@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Frontend">
         <activity
+            android:name=".JoinActivity"
+            android:exported="false" />
+        <activity
             android:name=".LoginActivity"
             android:exported="false" />
         <activity
