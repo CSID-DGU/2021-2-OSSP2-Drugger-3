@@ -1,0 +1,20 @@
+package com.example.frontend
+
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+
+class SplashActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_splash)
+
+        //into LoginActivity after a few seconds
+        //Handler(Looper.getMainLooper()).postDelayed({
+            /**
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+             finish()
+            */
+        //}, 1000)
+    }
+}
