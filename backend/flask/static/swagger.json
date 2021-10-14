@@ -1,0 +1,73 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "description": "sean",
+        "version": "1.0.0",
+        "title": "Drugger",
+        "contact":{
+        "email": "5656jieun@dgu.ac.kr"
+        },
+        "license":{
+            "name":"MIT",
+            "url":"https://opensource.org/licenses/MIT"
+        }
+    },
+    "servers": [
+      {
+        "url": "/"
+      }
+    ],
+    "paths": {
+      "/SignIn": {
+        "post": {
+          "tags": [
+            {
+              "name": "Sign In Test"
+            }
+          ],
+          "summary": "Create New User",
+          "requestBody": {
+            "description": "SignIn Request Post Object",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "201": {
+              "description": "OK"
+            },
+            "400": {
+              "description": "Failed. Bad post data."
+            }
+          }
+        }
+      }
+
+    },
+
+    "components": {
+      "schemas": {
+        "User": {
+          "type": "object",
+          "properties": {
+            "Id": {
+              "type": "string"
+            },
+            "Pw":{
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+
+
+  }
