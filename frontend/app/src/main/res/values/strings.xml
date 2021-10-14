@@ -3,6 +3,11 @@
     <string name="logo">logo</string>
     <string name="title">먹어도될까?</string>
     <string name="subTitle">약품 알레르기 관리 및 알림 서비스</string>
-    <string name="leftquotes">leftQuotes</string>
-    <string name="rightquotes">rightQuotes</string>
+    <string name="leftQuotes">leftQuotes</string>
+    <string name="rightQuotes">rightQuotes</string>
+    <string name="id">아이디</string>
+    <string name="pw">비밀번호</string>
+    <string name="login">로그인</string>
+    <string name="join">회원가입</string>
+    <string name="autoLogin">자동로그인</string>
 </resources>
