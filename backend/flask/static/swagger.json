@@ -41,7 +41,7 @@
             "application/json"
           ],
           "responses": {
-            "201": {
+            "200": {
               "description": "OK"
             },
             "400": {
@@ -49,8 +49,80 @@
             }
           }
         }
+      },
+      "/login":{
+        "post":{
+          "tags": [
+            {
+              "name": "Log In Test"
+            }
+          ],
+          "summary": "User login",
+          "requestBody": {
+            "description": "LogIn Request Post Object",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "400": {
+              "description": "Failed. Bad post data."
+            }
+          }
+        }
+      },
+      "/logout":{
+        "get":{
+          "tags": [
+            {
+              "name": "Logout Test"
+            }
+          ],
+          "summary" : "Logout",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "400": {
+              "description": "Failed. Bad GET data."
+            }
+          }
+        }
+      },
+      "/main":{
+        "get":{
+          "tags": [
+            {
+            "name": "Request User's allergy data"
+            } 
+          ],
+          "produces":[
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "400": {
+              "description": "Failed. Bad GET data."
+            }
+          }
+        }
       }
-
     },
 
     "components": {
@@ -70,4 +142,4 @@
     }
 
 
-  }
+}

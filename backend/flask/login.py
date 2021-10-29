@@ -16,14 +16,28 @@ class MEMBER(Base):
 
     
 
-def newMember(id, password, session):
-    isDuplicate = bool(session.query(MEMBER).filter_by(id=id).first())
+def newMember(id, password, db_session):
+    isDuplicate = bool(db_session.query(MEMBER).filter_by(id=id).first())
     
     if isDuplicate :
-        return
+        return "중복된 아이디입니다."
     else :
         user = MEMBER(id, password)
-        session.add(user)
-        session.commit()
+        db_session.add(user)
+        db_session.commit()
+        return "정상적으로 회원가입 완료하였습니다."
+
+def userlogin(id, pwd, db_session, session):
+    data = db_session.query(MEMBER).filter_by(id=id).first()
+    if data is not None:
+        if data.pw != pwd :
+            return "비밀번호를 확인해 주세요"
+    else :             
+        return "아이디를 확인해 주세요"
+
+    session['userID'] = data.id_num
+    return "로그인 성공" 
 
 
+
+            
