@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="itemList">
+        <item>증상</item>
+        <item>관절통</item>
+        <item>아낙필락시스</item>
+        <item>두드러기</item>
+        <item>열</item>
+        <item>오심</item>
+        <item>설사</item>
+        <item>근육통</item>
+        <item>림프부종</item>
+        <item>구토</item>
+        <item>발진</item>
+
+    </string-array>
+
+</resources>
