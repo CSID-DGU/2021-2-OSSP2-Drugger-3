@@ -37,11 +37,6 @@ services:
             - 9300:9300
         networks:
             - app_tier
-        volumes:
-            - type: bind
-              source: ./ELK/elasticsearch/config/elasticsearch.yml
-              target: /usr/share/elasticsearch/config/elasticsearch.yml
-              read_only: true
         environment:
             ES_JAVA_OPTS: "-Xmx256m -Xms256m"
             ELASTIC_PASSWORD: "123456"
@@ -55,32 +50,31 @@ services:
             memlock:
                 soft: -1
                 hard: -1
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10k"
+                max-file: "10"
+    
 
-    #logastash
     logstash:
         build:
             context: ./ELK/logstash
-        ports:
-            - 5044:5044
-            - 5000:5000/tcp
-            - 5000:5000/udp
-            - 9600:9600
-        volumes:
-            - type: bind
-              source: ./ELK/logstash/config/logstash.yml
-              target: /usr/share/logstash/config/logstash.yml
-              read_only: true
-
-            - type: bind
-              source: ./ELK/logstash/pipeline
-              target: /usr/share/logstash/pipeline
-              read_only: true    
-        environment:
-            LS_JAVA_OPTS: "-Xmx256m -Xms256m"
-        networks:
-            - app_tier
+        restart: on-failure
         depends_on:
             - elasticsearch
+        volumes:
+            - ./ELK/logstash/pipeline/:/usr/share/logstash/pipeline/
+            - ./ELK/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+            - ./ELK/logstash/pipelines.yml:/usr/share/logstash/config/pipelines.yml
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10k"
+                max-file: "10"
+        networks:
+            - app_tier
+
     
     #kibana
     kibana:
@@ -89,10 +83,8 @@ services:
         ports:
             - 5601:5601
         volumes:
-            - type: bind
-              source: ./ELK/kibana/config/kibana.yml
-              target: /usr/share/kibana/config/kibana.yml
-              read_only: true
+            - ./ELK/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
+        
         networks:
             - app_tier
         depends_on:
