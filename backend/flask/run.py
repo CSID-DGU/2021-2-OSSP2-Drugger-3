@@ -3,6 +3,7 @@ from flask_cors import CORS
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from login import newMember, userlogin
+from allergy import addAllergy, deleteAllergy, getUserInfo
 from flask_swagger_ui import get_swaggerui_blueprint
 
 # 데이터 베이스 불러오기
@@ -56,6 +57,21 @@ def logout():
     session.pop('userID', None)
     return "로그아웃 완료"
         
+@app.route('/main', methods=['GET'])
+def main():
+    result = getUserInfo(db_session, session)
+    return result
+
+@app.route('/edit/<int:option>', methods=['POST'])
+def edit(option):
+    data=request.get_json()
+    info = data
+    if option == 1 : # 약물 추가 
+        result = addAllergy(info[0], db_session, session)
+    else:  # 약물 삭제 
+        result = deleteAllergy(info, db_session, session)
+    return result
+
 
 if __name__ == '__main__':
     app.run(debug=True)
