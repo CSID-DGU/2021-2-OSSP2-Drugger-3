@@ -4,20 +4,25 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import com.example.frontend.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
+
+    lateinit var binding: ActivityLoginBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        var view = binding.root
+        setContentView(view)
 
-        val btnJoin = findViewById<Button>(R.id.joinButton)
-        btnJoin.setOnClickListener(){
+        binding.joinButton.setOnClickListener(){
             val intent = Intent(this, JoinActivity::class.java)
             startActivity(intent)
 
         }
-        val btnLogin = findViewById<Button>(R.id.loginButton)
-        btnLogin.setOnClickListener() {
+
+        binding.loginButton.setOnClickListener() {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
