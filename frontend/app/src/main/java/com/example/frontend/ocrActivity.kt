@@ -1,5 +1,6 @@
 package com.example.frontend
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.media.Image
@@ -11,7 +12,13 @@ import android.provider.ContactsContract
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.ImageView
+import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import com.example.frontend.databinding.ActivityOcrBinding
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
 import org.opencv.android.OpenCVLoader
 import org.opencv.android.Utils
 import org.opencv.core.Mat
@@ -43,8 +50,7 @@ class ocrActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        //from MainActivity's Camera 앱, get ImageURI
-        val strImageUri = intent.getStringExtra("imageUri")
+        val strImageUri = intent.getStringExtra("URI")
         val imageUri = Uri.parse(strImageUri)
 
         //ImageProcessing
@@ -57,11 +63,9 @@ class ocrActivity : AppCompatActivity() {
 
             //get binary Img
             val binaryImage = grayedImage?.let { mkBinary(it) }
-            binding.imageView4.setImageBitmap(binaryImage)
 
             //remove noise
             val noiselessImage = binaryImage?.let { removeNoise(it) }
-            binding.imageView5.setImageBitmap(binaryImage)
         }
     }
 

@@ -22,6 +22,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.example.frontend.databinding.ActivityMainBinding
+import com.theartofdev.edmodo.cropper.CropImage
 import java.io.File
 import java.util.jar.Manifest
 
@@ -41,9 +42,9 @@ class MainActivity : AppCompatActivity() {
     //for 카메라 앱 실행
     private var tempImageUri: Uri? = null
     private var tempImageFilePath = ""
-    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()){
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()){ it ->
         if(it){
-            val intent = Intent(this, ocrActivity::class.java)
+            val intent = Intent(this, CropActivity::class.java)
             intent.putExtra("imageUri", tempImageUri.toString())
             startActivity(intent)
         }
