@@ -1,30 +1,25 @@
 package com.example.frontend
 
-import android.content.Intent
+import android.content.res.AssetManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
-import android.media.Image
 import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.ImageView
 import android.widget.Toast
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import com.example.frontend.databinding.ActivityOcrBinding
-import com.theartofdev.edmodo.cropper.CropImage
-import com.theartofdev.edmodo.cropper.CropImageView
+import com.googlecode.tesseract.android.TessBaseAPI
 import org.opencv.android.OpenCVLoader
 import org.opencv.android.Utils
 import org.opencv.core.Mat
 import org.opencv.imgproc.Imgproc
 import org.opencv.imgproc.Imgproc.medianBlur
 import org.opencv.imgproc.Imgproc.threshold
+import java.io.*
 import java.lang.Exception
 
 class ocrActivity : AppCompatActivity() {
@@ -41,6 +36,10 @@ class ocrActivity : AppCompatActivity() {
         }
     }
 
+    //create Tesseract API' Object
+    lateinit var tess: TessBaseAPI
+    var dataPath: String = ""
+
     //ViewBinding
     private lateinit var binding:ActivityOcrBinding
 
@@ -54,6 +53,8 @@ class ocrActivity : AppCompatActivity() {
         val imageUri = Uri.parse(strImageUri)
 
         //ImageProcessing
+        /*
+        var resultImage: Bitmap? = null
         imageUri?.let{ uri ->
             //get Bitmap Img from URI
             val image = getBitmap(uri)
@@ -65,10 +66,82 @@ class ocrActivity : AppCompatActivity() {
             val binaryImage = grayedImage?.let { mkBinary(it) }
 
             //remove noise
-            val noiselessImage = binaryImage?.let { removeNoise(it) }
+            resultImage = binaryImage?.let { removeNoise(it) }
+        }
+        binding.imageView4.setImageBitmap(resultImage)
+        */
+
+        var testImg = BitmapFactory.decodeResource(resources, R.drawable.test)
+        //testImg = mkGray(testImg)
+        //testImg = mkBinary(grayedImg)
+        //testImg = removeNoise(binaryImg)
+
+        binding.imageView4.setImageBitmap(testImg)
+
+        //OCR with tess-two
+        dataPath = "$filesDir/tesseract/" //for language data
+
+        checkFile(File(dataPath+"tessdata/"), "kor")
+
+        val lang = "kor"
+        tess = TessBaseAPI()
+        tess.init(dataPath, lang)
+
+        val resultText = processOCR(testImg)
+        binding.result.text = resultText
+    }
+
+    //OCR Processing
+    private fun copyFile(lang: String) = try {
+      val filePath = "$dataPath/tessdata/$lang.traineddata"
+
+      val assetManager: AssetManager = getAssets()
+
+      val inputStream: InputStream = assetManager.open("tessdata/$lang.traineddata")
+      val outStream: OutputStream = FileOutputStream(filePath)
+
+      val buffer: ByteArray = ByteArray(1024)
+
+      var read: Int = 0
+      read = inputStream.read(buffer)
+      while(read!=-1){
+          outStream.write(buffer,0,read)
+          read = inputStream.read(buffer)
+      }
+      outStream.flush()
+      outStream.close()
+      inputStream.close()
+    }catch(e: FileNotFoundException){
+        Log.e("fileError", e.toString())
+    }catch(e: IOException){
+        Log.e("ioError", e.toString())
+    }
+
+    private fun checkFile(dir: File, lang: String) {
+        if(!dir.exists() && dir.mkdirs()){
+            copyFile(lang)
+        }
+        if(dir.exists()){
+            val dataFilePath: String = "$dataPath/tessdata/$lang.traineddata"
+            val dataFile: File = File(dataFilePath)
+
+            if(!dataFile.exists()){
+                copyFile(lang)
+            }
         }
     }
 
+    private fun processOCR(resultImage: Bitmap?): String {
+        Toast.makeText(this, "텍스트 변환 중입니다...", Toast.LENGTH_SHORT).show()
+
+        var ocrResult: String? = null
+        tess.setImage(resultImage)
+        ocrResult = tess.utF8Text
+
+        return ocrResult
+    }
+
+    //Image Processing
     private fun getBitmap(imgUri: Uri): Bitmap? {
         var bitmap: Bitmap? = null
 
