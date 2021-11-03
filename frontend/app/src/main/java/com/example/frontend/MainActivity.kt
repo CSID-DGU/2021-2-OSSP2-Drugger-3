@@ -31,26 +31,21 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     //Permissions
-    val PERMISSIONS = arrayOf(
+    private val PERMISSIONS = arrayOf(
         android.Manifest.permission.CAMERA,
         android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
         android.Manifest.permission.READ_EXTERNAL_STORAGE
     )
-    val PERMISSION_REQUEST = 1
+    private val PERMISSION_REQUEST = 1
 
     //for 카메라 앱 실행
     private var tempImageUri: Uri? = null
     private var tempImageFilePath = ""
     private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()){
-        //for debugging
         if(it){
-            Toast.makeText(this, "success!", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, ocrActivity::class.java)
             intent.putExtra("imageUri", tempImageUri.toString())
             startActivity(intent)
-        }
-        else{
-            Toast.makeText(this, "fail!", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -64,7 +59,6 @@ class MainActivity : AppCompatActivity() {
         binding.camera.setOnClickListener() {
             //카메라 권한 확인
             checkPermission(PERMISSIONS, PERMISSION_REQUEST)
-            Toast.makeText(this, "clicked!", Toast.LENGTH_SHORT).show()
 
             //tempImage Uri & FilePath 생성
             tempImageUri = FileProvider.getUriForFile(this, "com.example.frontend.fileprovider", createImgaeFile().also{
@@ -72,9 +66,6 @@ class MainActivity : AppCompatActivity() {
             })
             //카메라 앱 실행
             cameraLauncher.launch(tempImageUri)
-
-            //toDo : ocr page로 img path보내기
-
         }
     }
 
@@ -113,7 +104,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         if(checkResult){
-            Toast.makeText(this, "카메라 권한 승인이 필요합니다.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "카메라 권한 승인이 필요합니다. [앱 설정]에서 확인해주세요.", Toast.LENGTH_SHORT).show()
         }
     }
 }
