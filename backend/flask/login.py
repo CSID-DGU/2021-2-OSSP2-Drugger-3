@@ -1,5 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer
+from sqlalchemy.orm import session
 
 Base = declarative_base()
 
@@ -20,24 +21,35 @@ def newMember(id, password, db_session):
     isDuplicate = bool(db_session.query(MEMBER).filter_by(id=id).first())
     
     if isDuplicate :
-        return "중복된 아이디입니다."
+        return "duplicate"
     else :
-        user = MEMBER(id, password)
-        db_session.add(user)
-        db_session.commit()
-        return "정상적으로 회원가입 완료하였습니다."
+        try : 
+            user = MEMBER(id, password)
+            db_session.add(user)
+            db_session.commit()
+        except : 
+            db_session.rollback()
+            return "fail"
+        finally:
+            db_session.close()
+        return "success"
 
 def userlogin(id, pwd, db_session, session):
-    data = db_session.query(MEMBER).filter_by(id=id).first()
+    try :
+        data = db_session.query(MEMBER).filter_by(id=id).first()
+    except:
+        db_session.rollback()
+        return "fail"
+    finally:
+        db_session.close()
     if data is not None:
         if data.pw != pwd :
-            return "비밀번호를 확인해 주세요"
+            return "check pwd"
     else :             
-        return "아이디를 확인해 주세요"
+        return "check id"
 
     session['userID'] = data.id_num
-    return "로그인 성공" 
+    return "success" 
 
 
 
-            
