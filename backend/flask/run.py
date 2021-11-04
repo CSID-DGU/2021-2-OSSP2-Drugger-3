@@ -59,17 +59,19 @@ def logout():
         
 @app.route('/main', methods=['GET'])
 def main():
-    result = getUserInfo(db_session, session)
-    return result
+    result, state = getUserInfo(db_session, session)
+    return {"result" : result, "state" : state}
 
-@app.route('/edit/<int:option>', methods=['POST'])
-def edit(option):
+@app.route('/edit', methods=['POST', 'DELETE'])
+def edit():
     data=request.get_json()
     info = data
-    if option == 1 : # 약물 추가 
+
+    if request.method == 'POST' : 
         result = addAllergy(info[0], db_session, session)
-    else:  # 약물 삭제 
+    else :
         result = deleteAllergy(info, db_session, session)
+
     return result
 
 

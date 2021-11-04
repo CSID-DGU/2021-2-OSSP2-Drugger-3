@@ -19,32 +19,52 @@ class Allergy(Base):
 
 
 def getUserInfo(db_session, session):
-    allData = db_session.query(Allergy).filter_by(id_num=session['userID'])
+    result = []
+    try :
+        allData = db_session.query(Allergy).filter_by(id_num=session['userID'])
+    except:
+        db_session.rollback()
+        return result, "fail"
+    finally:
+        db_session.close()
     
-    result = {}
     for data in allData :
-        medicine = []
-        medicine['Mname'] = data['Mname']
-        medicine['Mmaterial'] = data['Mmaterial']
-        medicine['Symptom'] = data['Symptom']
+        medicine = {}
+        medicine['Mname'] = data.Mname
+        medicine['Mmaterial'] = data.Mmaterial
+        medicine['Symptom'] = data.Symptom
         result.append(medicine)
-    
-    return result
+    return result, "success"
 
 def addAllergy(info, db_session, session):
     newInfo = Allergy(session['userID'],info['Mname'], info['Mmaterial'], info['Symptom'])
-    db_session.add(newInfo)
-    db_session.commit()
-    return "알러지 항목 추가가 완료되었습니다."
+
+    try :
+        db_session.add(newInfo)
+        db_session.commit()
+    except:
+        db_session.rollback()
+        return "fail"
+    finally:
+        db_session.close()
+   
+    return "success"
+
 
 def deleteAllergy(infos, db_session, session):
 
-    for info in infos :
-        deleteData = db_session.query(Allergy).filter_by(id_num=session['userID'],
-                                        Mname=info['Mname'], Mmaterial=info['Mmaterial'], Symptom=info['Symptom']).first()
-        db_session.delete(deleteData)
-    db_session.commit()
-    return "알러지 항목 삭제가 완료되었습니다."
+    try : 
+        for info in infos :
+            deleteData = db_session.query(Allergy).filter_by(id_num=session['userID'],
+                                            Mname=info['Mname'], Mmaterial=info['Mmaterial'], Symptom=info['Symptom']).first()
+            db_session.delete(deleteData)
+        db_session.commit()
+    except:
+        db_session.rollback()
+        return "fail"
+    finally:
+        db_session.close()
+    return "success"
 
 
 

@@ -123,25 +123,45 @@
           }
         }
       },
-      "/edit/{option}":
+      "/edit":
       {
         "post":{
           "tags":[
             {
-              "name" : "Add or Delete allergy data"
-            }
-          ],
-          "parameters":[
-            {
-              "name" : "option",
-              "in" : "path",
-              "required" : true,
-              "description" : "Select Add or Delete",
-              "type" : "string"
+              "name" : "Add allergy data"
             }
           ],
           "requestBody": {
-            "description": "Edit Request Post Object",
+            "description": "Add Request Post Object",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Allergy"
+                }
+              }
+            }
+          },
+          "produces":[
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "400": {
+              "description": "Failed. Bad GET data."
+            }
+          }
+        },
+        "delete":{
+          "tags":[
+            {
+              "name" : "Delete allergy data"
+            }
+          ],
+          "requestBody": {
+            "description": "Delete Request Post Object",
             "required": true,
             "content": {
               "application/json": {
@@ -163,6 +183,7 @@
             }
           }
         }
+
       }
 
     },
