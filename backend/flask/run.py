@@ -4,7 +4,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from login import newMember, userlogin
 from allergy import addAllergy, deleteAllergy, getUserInfo
+from search import searchMedicine
 from flask_swagger_ui import get_swaggerui_blueprint
+from elasticsearch import Elasticsearch
 
 # 데이터 베이스 불러오기
 app = Flask(__name__,static_url_path='',static_folder="static") #html 폴더 경로 설정
@@ -14,6 +16,7 @@ app.config.from_pyfile('config.py')
 database = create_engine(app.config['DB_URL'], encoding = 'utf-8', max_overflow = 0)
 Session = sessionmaker(database)
 db_session = Session()
+es = Elasticsearch(["34.125.3.13"], PORT=9200, http_auth=("elastic", "123456"))
 
 # swagger 설정 
 CORS(app)
@@ -74,8 +77,13 @@ def edit():
 
     return result
 
+@app.route('/search', methods=['GET'])
+def search():
+    mname = request.args.getlist('mname')
+    result = searchMedicine(es, mname)
+    return jsonify(result)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-    

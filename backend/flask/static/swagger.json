@@ -184,7 +184,39 @@
           }
         }
 
+      },
+
+      "/search":{
+        "get": {
+          "tags": [
+            {
+              "name" : "Search Medicine"
+            }
+          ],
+          "parameters":[
+            {
+              "name" : "mname",
+              "in" : "query",
+              "required" : true,
+              "schema" : {
+              "type" : "array",
+              "items":{
+                "type" : "string"
+              }
+              },
+              "description" : "Medicine name"
+            }
+          ],
+          "responses": {
+            "200":{
+              "description" : "OK"
+            },
+            "400": {
+              "description": "Failed. Bad post data."
+            }
+          }
       }
+    }
 
     },
 
@@ -223,6 +255,6 @@
         }
       }
     }
-
+  
 
 }
