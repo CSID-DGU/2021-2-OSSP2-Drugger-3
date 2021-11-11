@@ -216,6 +216,38 @@
             }
           }
       }
+    },
+
+    "/analysis": {
+      "get": {
+        "tags": [
+          {
+            "name": "Analysis Medicine"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "mmaterial",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "description": "Medicine's Material"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          }
+        }
+      }
     }
 
     },

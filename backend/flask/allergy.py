@@ -66,5 +66,27 @@ def deleteAllergy(infos, db_session, session):
         db_session.close()
     return "success"
 
+def medicineAnalysis(materials, db_session, session):
+    result = []
+
+    for material in materials:
+        analysis = {}
+        try :
+            duplicate = db_session.query(Allergy).filter_by(Mmaterial=material).first()
+            if duplicate is not None:
+                analysis['material'] = material
+                analysis['status'] = 'DUPLICATE'
+                result.append(analysis)
+            else :
+                analysis['material'] = material
+                analysis['status'] = 'OK'
+                result.append(analysis)
+
+        except:
+            db_session.rollback()
+            return result, "fail"
+        finally:
+            db_session.close()
+    return result
 
 

@@ -3,7 +3,7 @@ from flask_cors import CORS
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from login import newMember, userlogin
-from allergy import addAllergy, deleteAllergy, getUserInfo
+from allergy import addAllergy, deleteAllergy, getUserInfo, medicineAnalysis
 from search import searchMedicine
 from flask_swagger_ui import get_swaggerui_blueprint
 from elasticsearch import Elasticsearch
@@ -83,7 +83,11 @@ def search():
     result = searchMedicine(es, mname)
     return jsonify(result)
 
-
+@app.route('/analysis', methods=['GET'])
+def analysis():
+    material = request.args.getlist('mmaterial')
+    result = medicineAnalysis(material, db_session, session)
+    return jsonify(result)
 
 if __name__ == '__main__':
     app.run(debug=True)
