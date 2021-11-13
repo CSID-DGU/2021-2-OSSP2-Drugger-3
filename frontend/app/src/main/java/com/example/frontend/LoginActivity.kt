@@ -25,8 +25,7 @@ class LoginActivity : AppCompatActivity() {
     lateinit var binding: ActivityLoginBinding
     var str = ""
     var islogin = false
-    var handler : Handler?= null
-    var request : Request?= null
+    var request = com.example.frontend.request.request
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,11 +45,10 @@ class LoginActivity : AppCompatActivity() {
             val Id = etid.text.toString();
             val Pw = etpw.text.toString();
             val json = JSONObject()
-            val client = HttpClient.client
             json.put("Id", Id)
             json.put("Pw", Pw)
             val body = RequestBody.create(JSON,json.toString())
-            request = Request.Builder()
+            var loginrequest = request
                 .url("http://34.125.3.13:8000/login")
                 .post(body)
                 .build()
@@ -63,7 +61,7 @@ class LoginActivity : AppCompatActivity() {
                 showPopup()
             }
             else {
-                HttpClient.client.newCall(request).enqueue(object : okhttp3.Callback{
+                HttpClient.client.newCall(loginrequest).enqueue(object : okhttp3.Callback{
                     override fun onFailure(call: okhttp3.Call, e: IOException) {
                         var dialog = AlertDialog.Builder(this@LoginActivity)
                         dialog.setTitle("에러")

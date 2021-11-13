@@ -33,6 +33,8 @@ import java.util.jar.Manifest
 
 class MainActivity : AppCompatActivity() {
     var str1 = ""
+    var request = com.example.frontend.request.request
+
     //ViewBinding
     private lateinit var binding: ActivityMainBinding
 
@@ -60,11 +62,11 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        val client = HttpClient.client
-        val request = Request.Builder()
+        var allergyrequest = request
             .url("http://34.125.3.13:8000/main")
             .build()
-        client.newCall(request).enqueue(object : okhttp3.Callback{
+        println("here1")
+        HttpClient.client.newCall(allergyrequest).enqueue(object : okhttp3.Callback{
             override fun onFailure(call: Call, e: IOException) {
                 println("error")
             }
@@ -72,6 +74,7 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
                     str1 = response!!.body()!!.string()
+                    println("str1 : ${str1}")
                     val allergy = JSONObject(str1)
                     val jsonArray = allergy.optJSONArray("result")
                     var i = 0
@@ -81,13 +84,16 @@ class MainActivity : AppCompatActivity() {
                         val material = jsonObject.getString("Mmaterial")
                         val medicine = jsonObject.getString("Mname")
                         val symptom = jsonObject.getString("Symptom")
+                        println("material : ${material}")
+                        println("medicine : ${medicine}")
+                        println("symptom : ${symptom}")
                         str_list.add(medicine)
                         str_list.add(material)
                         str_list.add(symptom)
                     }
-                    println(str_list.toString())
-                    println(str1.toString())
-                    println("here")
+                    //println(str_list.toString())
+                   // println(str1.toString())
+                    println("here2")
 
                 }
             }
@@ -100,7 +106,7 @@ class MainActivity : AppCompatActivity() {
             checkPermission(PERMISSIONS, PERMISSION_REQUEST)
 
             //tempImage Uri & FilePath 생성
-            tempImageUri = FileProvider.getUriForFile(this, "com.example.frontend.fileprovider", createImgaeFile().also{
+            tempImageUri = FileProvider.getUriForFile(this, "com.example.frontend.fileprovider", createImageFile().also{
                 tempImageFilePath = it.absolutePath
             })
             //카메라 앱 실행
@@ -108,7 +114,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun createImgaeFile() : File{
+    private fun createImageFile() : File{
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile("temp_image", "jpg", storageDir)
     }
