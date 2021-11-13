@@ -23,11 +23,16 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.example.frontend.databinding.ActivityMainBinding
 import com.theartofdev.edmodo.cropper.CropImage
+import okhttp3.Call
+import okhttp3.Request
+import okhttp3.Response
+import org.json.JSONObject
 import java.io.File
+import java.io.IOException
 import java.util.jar.Manifest
 
 class MainActivity : AppCompatActivity() {
-
+    var str1 = ""
     //ViewBinding
     private lateinit var binding: ActivityMainBinding
 
@@ -55,6 +60,39 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        val client = HttpClient.client
+        val request = Request.Builder()
+            .url("http://34.125.3.13:8000/main")
+            .build()
+        client.newCall(request).enqueue(object : okhttp3.Callback{
+            override fun onFailure(call: Call, e: IOException) {
+                println("error")
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    str1 = response!!.body()!!.string()
+                    val allergy = JSONObject(str1)
+                    val jsonArray = allergy.optJSONArray("result")
+                    var i = 0
+                    var str_list = ArrayList<String>();
+                    while(i < jsonArray.length()){
+                        val jsonObject = jsonArray.getJSONObject(i)
+                        val material = jsonObject.getString("Mmaterial")
+                        val medicine = jsonObject.getString("Mname")
+                        val symptom = jsonObject.getString("Symptom")
+                        str_list.add(medicine)
+                        str_list.add(material)
+                        str_list.add(symptom)
+                    }
+                    println(str_list.toString())
+                    println(str1.toString())
+                    println("here")
+
+                }
+            }
+
+        })
 
         //카메라 아이콘 클릭
         binding.camera.setOnClickListener() {
