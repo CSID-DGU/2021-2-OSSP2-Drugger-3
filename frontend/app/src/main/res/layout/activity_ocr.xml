@@ -7,23 +7,38 @@
     tools:context=".ocrActivity">
 
     <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="289dp"
-        android:layout_height="226dp"
+        android:id="@+id/inputImg"
+        android:layout_width="300dp"
+        android:layout_height="250dp"
         android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_launcher_foreground" />
 
-    <TextView
-        android:id="@+id/result"
-        android:layout_width="311dp"
-        android:layout_height="136dp"
+    <EditText
+        android:id="@+id/returnOCR"
+        android:layout_width="300dp"
+        android:layout_height="250dp"
         android:layout_marginTop="32dp"
-        android:text="TextView"
+        android:layout_marginBottom="32dp"
+        android:inputType="none"
+        android:scrollbars="vertical"
+        android:text=""
+        app:layout_constraintBottom_toTopOf="@+id/gotoSelect"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+        app:layout_constraintTop_toBottomOf="@+id/inputImg" />
+
+    <Button
+        android:id="@+id/gotoSelect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="35dp"
+        android:backgroundTint="@color/actionColor"
+        android:text="결과 보기"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

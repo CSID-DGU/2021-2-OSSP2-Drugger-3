@@ -1,5 +1,7 @@
 package com.example.frontend
 
+import android.content.Context
+import android.content.Intent
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -11,6 +13,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import androidx.core.widget.doAfterTextChanged
 import com.example.frontend.databinding.ActivityOcrBinding
 import com.googlecode.tesseract.android.TessBaseAPI
 import org.opencv.android.OpenCVLoader
@@ -21,6 +24,7 @@ import org.opencv.imgproc.Imgproc.medianBlur
 import org.opencv.imgproc.Imgproc.threshold
 import java.io.*
 import java.lang.Exception
+import java.util.*
 
 class ocrActivity : AppCompatActivity() {
 
@@ -52,31 +56,32 @@ class ocrActivity : AppCompatActivity() {
         val strImageUri = intent.getStringExtra("URI")
         val imageUri = Uri.parse(strImageUri)
 
+        binding.inputImg.setImageURI(imageUri)
+
         //ImageProcessing
-        /*
         var resultImage: Bitmap? = null
         imageUri?.let{ uri ->
             //get Bitmap Img from URI
-            val image = getBitmap(uri)
+            resultImage = getBitmap(uri)
 
             //get grayedBitmap from Bitmap Img
-            val grayedImage = image?.let { mkGray(it) }
+            resultImage = resultImage?.let { mkGray(it) }
 
             //get binary Img
-            val binaryImage = grayedImage?.let { mkBinary(it) }
+            resultImage = resultImage?.let { mkBinary(it) }
 
             //remove noise
-            resultImage = binaryImage?.let { removeNoise(it) }
+            resultImage = resultImage?.let { removeNoise(it) }
         }
-        binding.imageView4.setImageBitmap(resultImage)
-        */
 
+        /* for test.png
         var testImg = BitmapFactory.decodeResource(resources, R.drawable.test)
-        //testImg = mkGray(testImg)
-        //testImg = mkBinary(grayedImg)
-        //testImg = removeNoise(binaryImg)
+        testImg = mkGray(testImg)
+        testImg = mkBinary(grayedImg)
+        testImg = removeNoise(binaryImg)
 
-        binding.imageView4.setImageBitmap(testImg)
+        binding.inputImg.setImageBitmap(testImg)
+        */
 
         //OCR with tess-two
         dataPath = "$filesDir/tesseract/" //for language data
@@ -87,8 +92,39 @@ class ocrActivity : AppCompatActivity() {
         tess = TessBaseAPI()
         tess.init(dataPath, lang)
 
-        val resultText = processOCR(testImg)
-        binding.result.text = resultText
+        val resultText = processOCR(resultImage)
+        binding.returnOCR.setText(resultText)
+
+        //OCR로 처리된 기본 텍스트 값
+        var inputText = resultText
+
+        //사용자 수정후 update
+        binding.returnOCR.doAfterTextChanged {
+            inputText = binding.returnOCR.text.toString()
+        }
+
+        binding.gotoSelect.setOnClickListener() {
+            //전달 텍스트가 없는 경우, 에러 토스트 메세지 출력
+            if(inputText.isEmpty() || inputText.isBlank()){
+                Toast.makeText(this, "입력이 없습니다, \n검색하고자하는 약물을 제대로 입력해주세요!", Toast.LENGTH_SHORT).show()
+            }
+            //goto Select Activity with String Arr
+            else{
+                //inputText -> selectActivity로 전달
+                val intent = Intent(this, TempActivity::class.java)
+                intent.putExtra("input", inputText)
+                startActivity(intent)
+            }
+        }
+    }
+
+    //get ImageUri from Bitmap image
+    private fun getImageUri(context: Context, img: Bitmap): Uri{
+        val bytes = ByteArrayOutputStream()
+        img.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val path = MediaStore.Images.Media.insertImage(
+            context.getContentResolver(), img, "title_" + Calendar.getInstance().getTime(), null)
+        return Uri.parse(path)
     }
 
     //OCR Processing

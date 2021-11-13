@@ -14,11 +14,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Frontend">
         <activity
+            android:name=".TempActivity"
+            android:exported="false" />
+        <activity
             android:name=".CropActivity"
             android:exported="false" />
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity" />
         <activity
             android:name=".ocrActivity"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false" />
         <activity
             android:name=".JoinActivity"
