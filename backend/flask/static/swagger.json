@@ -186,6 +186,37 @@
 
       },
 
+      "/ocr":{
+        "post":{
+          "tags":[
+            {
+              "name" : "Recognize Medicine from Image"
+            }
+          ],
+          "consumes":["multipart/form-data"],
+          "parameters":[
+            {
+              "name" : "imageFile",
+              "in" : "formData",
+              "required" : true,
+              "description" : "Medicine Image",
+              "type" : "file"
+            }
+          ],
+          "produces":[
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "400": {
+              "description": "Failed. Bad GET data."
+            }
+          }
+        }
+      },
+
       "/search":{
         "get": {
           "tags": [
