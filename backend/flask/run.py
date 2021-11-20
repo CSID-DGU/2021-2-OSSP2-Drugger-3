@@ -4,9 +4,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from login import newMember, userlogin
 from allergy import addAllergy, deleteAllergy, getUserInfo, medicineAnalysis
-from search import searchMedicine
+from search import recognizeMedicine, searchMedicine
 from flask_swagger_ui import get_swaggerui_blueprint
 from elasticsearch import Elasticsearch
+from werkzeug.utils import secure_filename
 
 # 데이터 베이스 불러오기
 app = Flask(__name__,static_url_path='',static_folder="static") #html 폴더 경로 설정
@@ -75,6 +76,14 @@ def edit():
     else :
         result = deleteAllergy(info, db_session, session)
 
+    return result
+
+@app.route('/ocr', methods=['POST'])
+def ocr() : 
+    image = request.files['file']
+    image.save('static/uploads/' + secure_filename(image.filename))
+    image_route = 'static/uploads/' + image.filename
+    result = recognizeMedicine(image_route)
     return result
 
 @app.route('/search', methods=['GET'])

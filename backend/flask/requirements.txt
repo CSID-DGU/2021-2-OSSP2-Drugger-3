@@ -10,3 +10,5 @@ flask_ngrok
 flask_swagger_ui
 python-logstash
 elasticsearch
+pytesseract
+opencv-python
