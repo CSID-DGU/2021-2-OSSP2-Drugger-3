@@ -123,6 +123,35 @@
           }
         }
       },
+      "/main2/{id}": {
+        "get": {
+          "tags": [
+            {
+              "name": "Request User's allergy data"
+            }
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "userID",
+              "type": "string"
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "400": {
+              "description": "Failed. Bad GET data."
+            }
+          }
+        }
+      },
       "/edit":
       {
         "post":{
