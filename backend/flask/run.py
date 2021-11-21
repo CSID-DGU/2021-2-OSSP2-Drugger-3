@@ -66,6 +66,13 @@ def main():
     result, state = getUserInfo(db_session, session)
     return {"result" : result, "state" : state}
 
+@app.route('/main2/<string:id>', methods=['GET'])
+def main2(id):
+    userId = {}
+    userId['userID'] = id
+    result, state = getUserInfo(db_session, userId)
+    return {"result" : result, "state" : state}
+
 @app.route('/edit', methods=['POST', 'DELETE'])
 def edit():
     data=request.get_json()
