@@ -26,14 +26,15 @@ import com.theartofdev.edmodo.cropper.CropImage
 import okhttp3.Call
 import okhttp3.Request
 import okhttp3.Response
+import okhttp3.RequestBody
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 import java.util.jar.Manifest
+import okhttp3.*
 
 class MainActivity : AppCompatActivity() {
     var str1 = ""
-    var request = com.example.frontend.request.request
 
     //ViewBinding
     private lateinit var binding: ActivityMainBinding
@@ -62,21 +63,27 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        var allergyrequest = request
+        //var allergyrequest = requestSingle.request_instance
+        //request객체를 싱글톤으로 하면 아예 서버와의 통신하는 부분의 코드 실행 안됨
+        var allergyrequest = Request.Builder()
             .url("http://34.125.3.13:8000/main")
+            //.url("http://34.125.3.13:8000/main2/1")  // Id_num을 같이 넘겨줄 때의 URL
             .build()
-        println("here1")
-        HttpClient.client.newCall(allergyrequest).enqueue(object : okhttp3.Callback{
-            override fun onFailure(call: Call, e: IOException) {
-                println("error")
+        var client2 = HttpClient.client
+        //var client2 = OkHttpClient()
+        client2.newCall(allergyrequest).enqueue(object : okhttp3.Callback{
+            override fun onFailure(call: okhttp3.Call, e: IOException) {
+                println("here2 -----------------------------------------------------------")
             }
 
-            override fun onResponse(call: Call, response: Response) {
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
                 if (response.isSuccessful) {
                     str1 = response!!.body()!!.string()
                     println("str1 : ${str1}")
+                    //println("here3 -----------------------------------------------------------")
                     val allergy = JSONObject(str1)
                     val jsonArray = allergy.optJSONArray("result")
+                    //println(jsonArray)
                     var i = 0
                     var str_list = ArrayList<String>();
                     while(i < jsonArray.length()){
@@ -84,21 +91,24 @@ class MainActivity : AppCompatActivity() {
                         val material = jsonObject.getString("Mmaterial")
                         val medicine = jsonObject.getString("Mname")
                         val symptom = jsonObject.getString("Symptom")
-                        println("material : ${material}")
-                        println("medicine : ${medicine}")
-                        println("symptom : ${symptom}")
+                        //println("material : ${material}")
+                        //println("medicine : ${medicine}")
+                        //println("symptom : ${symptom}")
                         str_list.add(medicine)
                         str_list.add(material)
                         str_list.add(symptom)
+                        i++
                     }
                     //println(str_list.toString())
-                   // println(str1.toString())
-                    println("here2")
+                    // println(str1.toString())
+                    println(str_list)
+                    //println("here2")
 
                 }
             }
 
         })
+        println("here4 -----------------------------------------------------------")
 
         //카메라 아이콘 클릭
         binding.camera.setOnClickListener() {
