@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AlertDialog
 import com.example.frontend.HttpClient.client
@@ -25,7 +26,6 @@ class LoginActivity : AppCompatActivity() {
     lateinit var binding: ActivityLoginBinding
     var str = ""
     var islogin = false
-    var request = com.example.frontend.request.request
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,11 +48,13 @@ class LoginActivity : AppCompatActivity() {
             json.put("Id", Id)
             json.put("Pw", Pw)
             val body = RequestBody.create(JSON,json.toString())
-            var loginrequest = request
+            var loginrequest = Request.Builder()
                 .url("http://34.125.3.13:8000/login")
                 .post(body)
                 .build()
+            var client1 = HttpClient.client
             var dialog = AlertDialog.Builder(this@LoginActivity)
+            //handler
             if(Id.isEmpty() || Pw.isEmpty()){
                 isExistBlank = true
             }
@@ -61,7 +63,7 @@ class LoginActivity : AppCompatActivity() {
                 showPopup()
             }
             else {
-                HttpClient.client.newCall(loginrequest).enqueue(object : okhttp3.Callback{
+                client1.newCall(loginrequest).enqueue(object : okhttp3.Callback{
                     override fun onFailure(call: okhttp3.Call, e: IOException) {
                         var dialog = AlertDialog.Builder(this@LoginActivity)
                         dialog.setTitle("에러")
@@ -70,34 +72,14 @@ class LoginActivity : AppCompatActivity() {
                     }
 
                     override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                        if (response.isSuccessful) {
-                            str = response!!.body()!!.string()
-                            if (str == "success") {
-                                println("str : $str")
-                                val intent = Intent(binding.loginButton.context, MainActivity::class.java)
-                                startActivity(intent)
-                            } else if (str == "check id") {
-                                println("str : $str")
-                                /*var dialog = AlertDialog.Builder(this@LoginActivity)
-                            dialog.setTitle("에러")
-                            dialog.setMessage("아이디를 확인하십시오")
-                            dialog.show()*/
-                            } else if (str == "check pwd") {
-                                println("str : $str")
-                                /*var dialog = AlertDialog.Builder(this@LoginActivity)
-                            dialog.setTitle("에러")
-                            dialog.setMessage("비밀번호를 확인하십시오")
-                            dialog.show()
-                            showPopup()*/
-                            } else {
-                                println("str : $str")
-                                /*var dialog = AlertDialog.Builder(this@LoginActivity)
-                            dialog.setTitle("에러")
-                            dialog.setMessage("아이디와 비밀번호를 확인하십시오")
-                            dialog.show()*/
-                            }
-                            str = ""
+                        str = response!!.body()!!.string()
+                        if (str == "success") {
+                            val intent = Intent(binding.loginButton.context, MainActivity::class.java)
+                            startActivity(intent)
+                        } else{
+                            showdialog(str)
                         }
+                        str = ""
                     }
                 })
             }
@@ -116,5 +98,25 @@ class LoginActivity : AppCompatActivity() {
         alertDialog.setView(view)
         alertDialog.show()
 
+    }
+    private fun showdialog(str: String){
+        Thread(){
+            run(){
+                runOnUiThread(Runnable {
+                    run(){
+                        if (str == "check id") {
+                            println("str : $str")
+                            Toast.makeText(applicationContext, "아이디를 확인하십시오", Toast.LENGTH_SHORT).show()
+                        } else if (str == "check pwd") {
+                            println("str : $str")
+                            Toast.makeText(applicationContext, "비밀번호를 확인하십시오", Toast.LENGTH_SHORT).show()
+                        } else {
+                            println("str : $str")
+                            Toast.makeText(applicationContext, "아이디와 비밀번호를 확인하십시오", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                })
+            }
+        }.start()
     }
 }
