@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.frontend">
 
     <application
@@ -12,6 +13,7 @@
         <activity
             android:name=".JoinActivity"
             android:exported="false" />
+
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
@@ -24,6 +26,12 @@
         <activity
             android:name=".AddActivity"
             android:exported="false" />
+        <activity
+            android:name=".SearchActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".ResultActivity"
+            android:exported="false"/>
         <activity
             android:name=".SplashActivity"
             android:exported="true"

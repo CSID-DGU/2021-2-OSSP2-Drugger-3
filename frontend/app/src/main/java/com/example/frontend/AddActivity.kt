@@ -19,6 +19,13 @@ class AddActivity : AppCompatActivity() {
             val intent = Intent(this, EditActivity::class.java)
             startActivity(intent)
         }
+
+        val btncheck = findViewById<TextView>(R.id.checkButton)
+        btncheck.setOnClickListener() {
+            val intent = Intent(this, SearchActivity::class.java)
+            startActivity(intent)
+        }
+
         val btncancel = findViewById<TextView>(R.id.cancel)
         btncancel.setOnClickListener() {
             val intent = Intent(this, EditActivity::class.java)
