@@ -116,7 +116,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun createImageFile() : File{
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile("temp_image", "jpg", storageDir)
+        val tempFile = File.createTempFile("temp_image", "jpg", storageDir)
+        tempFile.deleteOnExit()
+        return tempFile
     }
 
     //권한 관련
