@@ -39,5 +39,6 @@ class CropActivity : AppCompatActivity() {
         val intent = Intent(this, ocrActivity::class.java)
         intent.putExtra("URI", res.uri.toString())
         startActivity(intent)
+        finish()
     }
 }

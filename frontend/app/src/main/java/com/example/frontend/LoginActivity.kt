@@ -83,6 +83,7 @@ class LoginActivity : AppCompatActivity() {
                         "success" -> {
                             val cookie: String? = response.headers["Set-Cookie"]
 
+                            //val intent = Intent(context, MainActivity::class.java)
                             val intent = Intent(context, MainActivity::class.java)
                             intent.putExtra("cookie", cookie)
                             startActivity(intent)
