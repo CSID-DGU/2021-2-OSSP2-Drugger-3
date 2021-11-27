@@ -62,10 +62,19 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
         var cookie: String?
         cookie = MySharedPreferences.getMyCookie(this)
 
         loadInfo(cookie, this)
+
+        //테스트용으로 resultPage로 가게끔
+        binding.imageView.setOnClickListener(){
+            val intent = Intent(this, ResultActivity::class.java)
+            intent.putExtra("cookie", cookie)
+            startActivity(intent)
+            finish()
+        }
 
         //카메라 아이콘 클릭
         binding.camera.setOnClickListener() {
