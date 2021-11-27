@@ -11,10 +11,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import com.example.frontend.databinding.ActivityOcrBinding
+import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
 import org.json.JSONObject
 import java.io.*
 import java.lang.Exception
@@ -36,8 +34,10 @@ class ocrActivity : AppCompatActivity() {
 
         binding.inputImg.setImageURI(imageUri)
 
+        val imgUrl = createFileFromUri(imageUri)
+
         //이 부분 수정 바람!
-        val resultText = processOCR() //알맞게 넣어주기
+        val resultText = processOCR(imgUrl) //알맞게 넣어주기
         binding.returnOCR.setText(resultText) //returnOCR 요소에 처리된 텍스트 출력
 
         //OCR로 처리된 기본 텍스트 값
@@ -63,13 +63,20 @@ class ocrActivity : AppCompatActivity() {
         }
     }
 
-    private fun processOCR(): String {
-        var ocrResult: String = ""
+    private fun processOCR(imgUrl : String): String {
+        var ocrResult = ArrayList<String>()
 
-        val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
-        val json = JSONObject()
 
-        val body = RequestBody.create(JSON,json.toString())
+        val sourceFile = File(imgUrl)
+        val MEDIA_TYPE = "image/jpeg".toMediaTypeOrNull()
+        val filename: String = imgUrl.substring(imgUrl.lastIndexOf("/") + 1)
+
+
+        val body = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("file", filename, RequestBody.create(MEDIA_TYPE, sourceFile))
+            .build()
+
 
         val request = Request.Builder()
             .url("http://34.125.3.13:8000/ocr")
@@ -92,7 +99,16 @@ class ocrActivity : AppCompatActivity() {
             }
         })
 
-        return ocrResult
+        var result : String = ""
+        for( i in ocrResult)
+            result += (i+" ")
+
+        return result
     }
 
+    private fun createFileFromUri(imgUri: Uri): String{
+        val tempFile = File(imgUri.toString())
+        tempFile.deleteOnExit()
+        return tempFile.path
+    }
 }
