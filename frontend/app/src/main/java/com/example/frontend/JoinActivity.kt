@@ -86,6 +86,7 @@ class JoinActivity : AppCompatActivity() {
 
                             val intent = Intent(context, LoginActivity::class.java)
                             startActivity(intent)
+                            finish()
                         }
                         "duplicate" -> toast("이미 존재하는 아이디입니다.")
                         else -> toast("Fail!")

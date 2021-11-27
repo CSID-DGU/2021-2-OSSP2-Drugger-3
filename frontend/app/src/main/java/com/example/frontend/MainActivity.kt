@@ -12,9 +12,9 @@ import android.os.Environment
 import android.os.FileUtils
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.Button
-import android.widget.SearchView
-import android.widget.Toast
+import android.view.View
+import android.view.ViewGroup
+import android.widget.*
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -62,9 +62,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
-
-        val cookie = intent.getStringExtra("cookie")
+        var cookie: String?
+        cookie = MySharedPreferences.getMyCookie(this)
 
         loadInfo(cookie, this)
 
@@ -79,6 +78,13 @@ class MainActivity : AppCompatActivity() {
             })
             //카메라 앱 실행
             cameraLauncher.launch(tempImageUri)
+        }
+
+        binding.logout.setOnClickListener(){
+            val intent = Intent(this, LoginActivity::class.java)
+            MySharedPreferences.clearUser(this)
+            startActivity(intent)
+            finish()
         }
     }
 
@@ -103,11 +109,93 @@ class MainActivity : AppCompatActivity() {
 
                     if(response.isSuccessful){
                         val str = response.body?.string()
-                        println(str)
+                        println("str1 : ${str}")
+                        val allergy = JSONObject(str)
+                        val jsonArray = allergy.optJSONArray("result")
+                        var i = 0
+                        var str_list = ArrayList<String>();
+                        var tableLayout = binding.tableLayout
+                        while(i < jsonArray.length()){
+                            val jsonObject = jsonArray.getJSONObject(i)
+                            val material = jsonObject.getString("Mmaterial")
+                            val medicine = jsonObject.getString("Mname")
+                            val symptom = jsonObject.getString("Symptom")
+                            str_list.add(medicine)
+                            str_list.add(material)
+                            str_list.add(symptom)
+                            i++
+                        }
+                        println(str_list)
+                        showAllergy(tableLayout, str_list)
                     }
                 }
             })
         }
+    }
+
+    private fun showAllergy(tableLayout: TableLayout, str_list: ArrayList<String>){
+        Thread(){
+            run(){
+                runOnUiThread(Runnable {
+                    run(){
+                        var temp = str_list.size/3
+                        for (i : Int in 0 .. temp-1) {
+                            var tr = TableRow(this@MainActivity)
+                            tr.setLayoutParams(
+                                TableRow.LayoutParams(
+                                    TableRow.LayoutParams.FILL_PARENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT
+                                )
+                            )
+                            var t1 = TextView(this@MainActivity)
+                            /**t1.layoutParams= RelativeLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT
+                            )*/
+                            //t1.layoutParams.width = 150
+                            t1.setText(str_list[i*3])
+                            t1
+                            var t2 = TextView(this@MainActivity)
+                            /**t2.layoutParams= RelativeLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT
+                            )*/
+                            t2.setText(str_list[i*3+1])
+                            var t3 = TextView(this@MainActivity)
+                            /**t2.layoutParams= RelativeLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT
+                            )*/
+                            t3.setText(str_list[i*3+2])
+                            tr.addView(t1)
+                            tr.addView(t2)
+                            tr.addView(t3)
+                            tableLayout.addView(tr)
+                            //println(str_list[i*3+2])
+                        }
+                        var tr = TableRow(this@MainActivity)
+                        tr.setLayoutParams(
+                            TableRow.LayoutParams(
+                                TableRow.LayoutParams.FILL_PARENT,
+                                TableRow.LayoutParams.WRAP_CONTENT
+                            )
+                        )
+                        var t1 = TextView(this@MainActivity)
+                        t1.setText("   ")
+                        var t2 = TextView(this@MainActivity)
+                        t2.setText("   ")
+                        var t3 = TextView(this@MainActivity)
+                        t3.setText("   ")
+                        tr.addView(t1)
+                        tr.addView(t2)
+                        tr.addView(t3)
+                        tableLayout.addView(tr)
+                        //println(str_list[i*3+2])
+
+                    }
+                })
+            }
+        }.start()
     }
 
     private fun createImageFile() : File{

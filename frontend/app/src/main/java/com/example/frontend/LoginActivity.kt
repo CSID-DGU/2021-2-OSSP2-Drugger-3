@@ -2,6 +2,7 @@ package com.example.frontend
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -22,24 +23,34 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         var view = binding.root
         setContentView(view)
-
-        binding.joinButton.setOnClickListener(){
-            val intent = Intent(this, JoinActivity::class.java)
+        //자동 로그인 점검
+        if(!(MySharedPreferences.getMyCookie(this).isNullOrBlank())){
+            //비어있지 않은 경우
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
+            finish()
         }
-
-        binding.loginButton.setOnClickListener() {
-
-            val userId = binding.userID.text.toString()
-            val userPw = binding.userPW.text.toString()
-
-            //미입력 처리
-            if(userId.isEmpty() || userId.isBlank() || userPw.isEmpty() || userPw.isBlank()){
-                Toast.makeText(this, "입력을 완료해주세요.", Toast.LENGTH_SHORT).show()
+        else {
+            //비어있는 경우
+            binding.joinButton.setOnClickListener() {
+                val intent = Intent(this, JoinActivity::class.java)
+                startActivity(intent)
+                finish()
             }
 
-            //request login
-            login(userId, userPw, this)
+            binding.loginButton.setOnClickListener() {
+
+                val userId = binding.userID.text.toString()
+                val userPw = binding.userPW.text.toString()
+
+                //미입력 처리
+                if (userId.isEmpty() || userId.isBlank() || userPw.isEmpty() || userPw.isBlank()) {
+                    Toast.makeText(this, "입력을 완료해주세요.", Toast.LENGTH_SHORT).show()
+                }
+
+                //request login
+                login(userId, userPw, this)
+            }
         }
     }
 
@@ -82,10 +93,10 @@ class LoginActivity : AppCompatActivity() {
                     when(str){
                         "success" -> {
                             val cookie: String? = response.headers["Set-Cookie"]
-
                             val intent = Intent(context, MainActivity::class.java)
-                            intent.putExtra("cookie", cookie)
+                            MySharedPreferences.setMyCookie(context, cookie)
                             startActivity(intent)
+                            finish()
                         }
                         "check id" -> toast("아이디를 확인하세요.")
                         "check pwd" -> toast("비밀번호를 확인하세요.")
