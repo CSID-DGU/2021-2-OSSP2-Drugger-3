@@ -19,6 +19,9 @@
             android:name=".TempActivity"
             android:exported="false" />
         <activity
+            android:name=".ResultActivity"
+            android:exported="false" />
+        <activity
             android:name=".CropActivity"
             android:exported="false" />
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity" />
