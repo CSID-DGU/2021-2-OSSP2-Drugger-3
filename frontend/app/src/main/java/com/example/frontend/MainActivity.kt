@@ -75,6 +75,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+        binding.EditButton.setOnClickListener(){
+            val intent = Intent(this, EditActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 
         //카메라 아이콘 클릭
         binding.camera.setOnClickListener() {
@@ -163,7 +168,6 @@ class MainActivity : AppCompatActivity() {
                             )*/
                             //t1.layoutParams.width = 150
                             t1.setText(str_list[i*3])
-                            t1
                             var t2 = TextView(this@MainActivity)
                             /**t2.layoutParams= RelativeLayout.LayoutParams(
                                 ViewGroup.LayoutParams.MATCH_PARENT,
