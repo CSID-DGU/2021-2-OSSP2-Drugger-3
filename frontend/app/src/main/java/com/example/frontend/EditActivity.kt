@@ -43,9 +43,9 @@ class EditActivity : AppCompatActivity() {
             if(check 되었다) check 된거 삭제
             id가 1이면 str_list[3], str_list[4], str_list[5]순으로 내용 담아서 delete 해야됨
             다 하고나서 intent mainactivity*/
-            var temp = str_list.size/3
+            /**var temp = str_list.size/3
             for(i: Int in 0..temp-1) {
-                if(binding.i.isChecked){
+                if(i<temp){
                     val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
                     val json = JSONObject()
 
@@ -69,7 +69,7 @@ class EditActivity : AppCompatActivity() {
                         }
                     })
                 }
-            }
+            }*/
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()

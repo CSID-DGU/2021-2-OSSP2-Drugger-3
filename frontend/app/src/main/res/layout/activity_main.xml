@@ -46,15 +46,6 @@
         app:srcCompat="@drawable/list"
         tools:ignore="MissingConstraints" />
 
-    <ScrollView
-        android:id="@+id/scrollView2"
-        android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        app:layout_constraintEnd_toEndOf="@id/imageView"
-        app:layout_constraintHorizontal_bias="0.454"
-        app:layout_constraintStart_toStartOf="@id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/button3"
-        tools:ignore="MissingConstraints">
 
         <TableLayout
             android:id="@+id/tableLayout"
@@ -71,43 +62,52 @@
             tools:ignore="MissingConstraints">
 
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-                <TextView
-                    android:id="@+id/textView40"
-                    android:layout_width="160dp"
-                    android:layout_height="40dp"
-                    android:background="@android:color/darker_gray"
-                    android:backgroundTint="@android:color/darker_gray"
-                    android:text="약물이름"
-                    android:textSize="25sp"
-                    android:textStyle="bold" />
+            <TextView
+                android:id="@+id/textView40"
+                android:layout_width="150dp"
+                android:layout_height="40dp"
+                android:background="@android:color/darker_gray"
+                android:backgroundTint="@android:color/darker_gray"
+                android:text="약물이름"
+                android:textSize="25sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/textView41"
-                    android:layout_width="160dp"
-                    android:layout_height="40dp"
-                    android:background="@android:color/darker_gray"
-                    android:backgroundTint="@android:color/darker_gray"
-                    android:text="주성분"
-                    android:textSize="25sp"
-                    android:textStyle="bold" />
+            <TextView
+                android:id="@+id/textView41"
+                android:layout_width="150dp"
+                android:layout_height="40dp"
+                android:background="@android:color/darker_gray"
+                android:backgroundTint="@android:color/darker_gray"
+                android:text="주성분"
+                android:textSize="25sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/textView42"
-                    android:layout_width="120dp"
-                    android:layout_height="40dp"
-                    android:background="@android:color/darker_gray"
-                    android:backgroundTint="@android:color/darker_gray"
-                    android:text="반응"
-                    android:textSize="25sp"
-                    android:textStyle="bold" />
-            </TableRow>
-        </TableLayout>
+            <TextView
+                android:id="@+id/textView42"
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+                android:background="@android:color/darker_gray"
+                android:backgroundTint="@android:color/darker_gray"
+                android:text="반응"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+        </TableRow>
+    </TableLayout>
 
-    </ScrollView>
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/mRecyclerView"
+        app:layout_constraintBottom_toTopOf="@+id/camera"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tableLayout"
+        app:layout_constraintVertical_bias="0.0"></androidx.recyclerview.widget.RecyclerView>
 
     <EditText
         android:id="@+id/editTextTextPersonName2"
