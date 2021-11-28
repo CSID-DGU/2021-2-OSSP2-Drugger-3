@@ -1,22 +1,25 @@
 package com.example.frontend
 
-import android.content.Context
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
 import com.example.frontend.databinding.ActivityOcrBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import org.json.JSONObject
 import java.io.*
-import java.lang.Exception
-import java.util.*
 
 class ocrActivity : AppCompatActivity() {
     //ViewBinding
@@ -34,11 +37,13 @@ class ocrActivity : AppCompatActivity() {
 
         binding.inputImg.setImageURI(imageUri)
 
-        val imgUrl = createFileFromUri(imageUri)
+        val contentUri = getUri(imageUri)
+        val realPath = getAbPath(contentUri)
+        var resultText = ""
 
-        //이 부분 수정 바람!
-        val resultText = processOCR(imgUrl) //알맞게 넣어주기
-        binding.returnOCR.setText(resultText) //returnOCR 요소에 처리된 텍스트 출력
+        if(realPath != null){
+            resultText = coroutine(realPath)
+        }
 
         //OCR로 처리된 기본 텍스트 값
         var inputText = resultText
@@ -63,12 +68,58 @@ class ocrActivity : AppCompatActivity() {
         }
     }
 
-    private fun processOCR(imgUrl : String): String {
-        var ocrResult = ArrayList<String>()
+    private fun getUri(uri: Uri): Uri {
+        // URI -> Bitmap -> MediaStore를 이용해 external storage에 저장
+        val bitmap = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
+            // https://developer.android.com/reference/android/graphics/ImageDecoder
+            // CvException [org.opencv.core.CvException: OpenCV(4.1.1) /build/master_pack-android/opencv/modules/java/generator/src/cpp/utils.cpp:38: error: (-215:Assertion failed) AndroidBitmap_lockPixels(env, bitmap, &pixels) >= 0
+            /*
+                  By default, a Bitmap created by ImageDecoder (including one that is inside a Drawable)
+                  will be immutable (i.e. Bitmap#isMutable returns false), and it will typically
+                  have Config Bitmap.Config#HARDWARE. Although these properties can be change
+                  with setMutableRequired(true)
+                 */
+            val source = ImageDecoder.createSource(contentResolver, uri)
+            ImageDecoder.decodeBitmap(source){ decoder, _, _ ->
+                decoder.isMutableRequired = true
+            }
+        }else{
+            MediaStore.Images.Media.getBitmap(contentResolver, uri)
+        }
 
+        val bytes = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val contentPath = MediaStore.Images.Media.insertImage(
+            this.contentResolver, bitmap, "cropped", null)
+        val contentUri = Uri.parse(contentPath)
+        return contentUri
 
+    }
+
+    @SuppressLint("Range")
+    fun getAbPath(uri: Uri): String?{
+        val cursor = contentResolver.query(uri, null, null, null, null)
+        cursor?.moveToNext()
+        val path = cursor?.getString(cursor.getColumnIndex("_data"))
+        cursor?.close()
+        return path
+    }
+
+    private fun coroutine(imgUrl : String): String{
+        var result = ""
+        CoroutineScope(Dispatchers.Main).launch{
+            result = CoroutineScope(Dispatchers.IO).async {
+                getOCR(imgUrl)
+            }.await()
+            //이 부분 수정 바람
+            binding.returnOCR.setText(result) //returnOCR 요소에 처리된 텍스트 출력
+        }
+        return result
+    }
+
+    private fun getOCR(imgUrl: String): String {
         val sourceFile = File(imgUrl)
-        val MEDIA_TYPE = "image/jpeg".toMediaTypeOrNull()
+        val MEDIA_TYPE = "image/jpg".toMediaTypeOrNull()
         val filename: String = imgUrl.substring(imgUrl.lastIndexOf("/") + 1)
 
 
@@ -79,36 +130,18 @@ class ocrActivity : AppCompatActivity() {
 
 
         val request = Request.Builder()
-            .url("http://34.125.3.13:8000/ocr")
+            .url("http://http://34.125.3.13:8000/ocr")
             .post(body) //body 셋팅 필요
             .build()
-        val client = OkHttpClient()
+        val client = OkHttpClient.Builder().build()
 
-        client.newCall(request).enqueue(object: okhttp3.Callback{
-            override fun onFailure(call: okhttp3.Call, e: IOException) {
-                Log.d("connection", "fail")
+        client.newCall(request).execute().use{  response ->
+            return if (response.body != null){
+                response.body?.string().toString()
+            }else{
+                ""
             }
-            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                Log.d("connection", "success")
-
-                if(response.isSuccessful){
-                    val str = response.body?.string() //response body 값
-                }else{ //not success!
-                    Log.d("connection", "Bad")
-                }
-            }
-        })
-
-        var result : String = ""
-        for( i in ocrResult)
-            result += (i+" ")
-
-        return result
+        }
     }
 
-    private fun createFileFromUri(imgUri: Uri): String{
-        val tempFile = File(imgUri.toString())
-        tempFile.deleteOnExit()
-        return tempFile.path
-    }
 }
