@@ -1,303 +1,44 @@
 {
-    "openapi": "3.0.0",
-    "info": {
-        "description": "sean",
-        "version": "1.0.0",
-        "title": "Drugger",
-        "contact":{
-        "email": "5656jieun@dgu.ac.kr"
-        },
-        "license":{
-            "name":"MIT",
-            "url":"https://opensource.org/licenses/MIT"
-        }
-    },
-    "servers": [
-      {
-        "url": "/"
+  "openapi": "3.0.0",
+  "info": {
+      "description": "sean",
+      "version": "1.0.0",
+      "title": "Drugger",
+      "contact":{
+      "email": "5656jieun@dgu.ac.kr"
+      },
+      "license":{
+          "name":"MIT",
+          "url":"https://opensource.org/licenses/MIT"
       }
-    ],
-    "paths": {
-      "/SignIn": {
-        "post": {
-          "tags": [
-            {
-              "name": "Sign In Test"
-            }
-          ],
-          "summary": "Create New User",
-          "requestBody": {
-            "description": "SignIn Request Post Object",
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "produces": [
-            "application/json"
-          ],
-          "responses": {
-            "200": {
-              "description": "OK"
-            },
-            "400": {
-              "description": "Failed. Bad post data."
-            }
-          }
-        }
-      },
-      "/login":{
-        "post":{
-          "tags": [
-            {
-              "name": "Log In Test"
-            }
-          ],
-          "summary": "User login",
-          "requestBody": {
-            "description": "LogIn Request Post Object",
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "produces": [
-            "application/json"
-          ],
-          "responses": {
-            "200": {
-              "description": "OK"
-            },
-            "400": {
-              "description": "Failed. Bad post data."
-            }
-          }
-        }
-      },
-      "/logout":{
-        "get":{
-          "tags": [
-            {
-              "name": "Logout Test"
-            }
-          ],
-          "summary" : "Logout",
-          "produces": [
-            "application/json"
-          ],
-          "responses": {
-            "200": {
-              "description": "OK"
-            },
-            "400": {
-              "description": "Failed. Bad GET data."
-            }
-          }
-        }
-      },
-      "/main":{
-        "get":{
-          "tags": [
-            {
-            "name": "Request User's allergy data"
-            } 
-          ],
-          "produces":[
-            "application/json"
-          ],
-          "responses": {
-            "200": {
-              "description": "OK"
-            },
-            "400": {
-              "description": "Failed. Bad GET data."
-            }
-          }
-        }
-      },
-      "/main2/{id}": {
-        "get": {
-          "tags": [
-            {
-              "name": "Request User's allergy data"
-            }
-          ],
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "description": "userID",
-              "type": "string"
-            }
-          ],
-          "produces": [
-            "application/json"
-          ],
-          "responses": {
-            "200": {
-              "description": "OK"
-            },
-            "400": {
-              "description": "Failed. Bad GET data."
-            }
-          }
-        }
-      },
-      "/edit":
-      {
-        "post":{
-          "tags":[
-            {
-              "name" : "Add allergy data"
-            }
-          ],
-          "requestBody": {
-            "description": "Add Request Post Object",
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Allergy"
-                }
-              }
-            }
-          },
-          "produces":[
-            "application/json"
-          ],
-          "responses": {
-            "200": {
-              "description": "OK"
-            },
-            "400": {
-              "description": "Failed. Bad GET data."
-            }
-          }
-        },
-        "delete":{
-          "tags":[
-            {
-              "name" : "Delete allergy data"
-            }
-          ],
-          "requestBody": {
-            "description": "Delete Request Post Object",
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Allergy"
-                }
-              }
-            }
-          },
-          "produces":[
-            "application/json"
-          ],
-          "responses": {
-            "200": {
-              "description": "OK"
-            },
-            "400": {
-              "description": "Failed. Bad GET data."
-            }
-          }
-        }
-
-      },
-
-      "/ocr":{
-        "post":{
-          "tags":[
-            {
-              "name" : "Recognize Medicine from Image"
-            }
-          ],
-          "consumes":["multipart/form-data"],
-          "parameters":[
-            {
-              "name" : "imageFile",
-              "in" : "formData",
-              "required" : true,
-              "description" : "Medicine Image",
-              "type" : "file"
-            }
-          ],
-          "produces":[
-            "application/json"
-          ],
-          "responses": {
-            "200": {
-              "description": "OK"
-            },
-            "400": {
-              "description": "Failed. Bad GET data."
-            }
-          }
-        }
-      },
-
-      "/search":{
-        "get": {
-          "tags": [
-            {
-              "name" : "Search Medicine"
-            }
-          ],
-          "parameters":[
-            {
-              "name" : "mname",
-              "in" : "query",
-              "required" : true,
-              "schema" : {
-              "type" : "array",
-              "items":{
-                "type" : "string"
-              }
-              },
-              "description" : "Medicine name"
-            }
-          ],
-          "responses": {
-            "200":{
-              "description" : "OK"
-            },
-            "400": {
-              "description": "Failed. Bad post data."
-            }
-          }
-      }
-    },
-
-    "/analysis": {
-      "get": {
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "paths": {
+    "/SignIn": {
+      "post": {
         "tags": [
           {
-            "name": "Analysis Medicine"
+            "name": "Sign In Test"
           }
         ],
-        "parameters": [
-          {
-            "name": "mmaterial",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
+        "summary": "Create New User",
+        "requestBody": {
+          "description": "SignIn Request Post Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
               }
-            },
-            "description": "Medicine's Material"
+            }
           }
+        },
+        "produces": [
+          "application/json"
         ],
         "responses": {
           "200": {
@@ -308,45 +49,334 @@
           }
         }
       }
-    }
+    },
+    "/login":{
+      "post":{
+        "tags": [
+          {
+            "name": "Log In Test"
+          }
+        ],
+        "summary": "User login",
+        "requestBody": {
+          "description": "LogIn Request Post Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          }
+        }
+      }
+    },
+    "/logout":{
+      "get":{
+        "tags": [
+          {
+            "name": "Logout Test"
+          }
+        ],
+        "summary" : "Logout",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Failed. Bad GET data."
+          }
+        }
+      }
+    },
+    "/main":{
+      "get":{
+        "tags": [
+          {
+          "name": "Request User's allergy data"
+          } 
+        ],
+        "produces":[
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Failed. Bad GET data."
+          }
+        }
+      }
+    },
+    "/main2/{id}": {
+      "get": {
+        "tags": [
+          {
+            "name": "Request User's allergy data"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "userID",
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Failed. Bad GET data."
+          }
+        }
+      }
+    },
+    "/edit":
+    {
+      "post":{
+        "tags":[
+          {
+            "name" : "Add allergy data"
+          }
+        ],
+        "requestBody": {
+          "description": "Add Request Post Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Allergy"
+              }
+            }
+          }
+        },
+        "produces":[
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Failed. Bad GET data."
+          }
+        }
+      },
+      "delete":{
+        "tags":[
+          {
+            "name" : "Delete allergy data"
+          }
+        ],
+        "requestBody": {
+          "description": "Delete Request Post Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Allergy"
+              }
+            }
+          }
+        },
+        "produces":[
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Failed. Bad GET data."
+          }
+        }
+      }
 
     },
 
-    "components": {
-      "schemas": {
-        "User": {
-          "type": "object",
-          "properties": {
-            "Id": {
-              "type": "string"
-            },
-            "Pw":{
-              "type": "string"
+    "/ocr":{
+      "post":{
+        "tags":[
+          {
+            "name" : "Recognize Medicine from Image"
+          }
+        ],
+        "consumes":["multipart/form-data"],
+        "requestBody": {
+          "description": "LogIn Request Post Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/image"
+              }
             }
           }
         },
-        "Allergy":{
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/components/schemas/info"
+        "produces":[
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Failed. Bad GET data."
           }
-        },
-        "info":{
-          "type" : "object",
-          "properties":{
-            "Mname":{
-              "type":"string"
-            },
-            "Mmaterial":{
-              "type":"string"
-            },
-            "Symptom":{
-              "type":"string"
+        }
+      }
+    },
+
+    "/search":{
+      "get": {
+        "tags": [
+          {
+            "name" : "Search Medicine"
+          }
+        ],
+        "parameters":[
+          {
+            "name" : "mname",
+            "in" : "query",
+            "required" : true,
+            "schema" : {
+            "type" : "array",
+            "items":{
+              "type" : "string"
             }
+            },
+            "description" : "Medicine name"
+          }
+        ],
+        "responses": {
+          "200":{
+            "description" : "OK"
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          }
+        }
+    }
+  },
+
+  "/analysis": {
+    "get": {
+      "tags": [
+        {
+          "name": "Analysis Medicine"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "mname",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Medicine's Material"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "OK"
+        },
+        "400": {
+          "description": "Failed. Bad post data."
+        }
+      }
+    }
+  },
+  "/updateIndex": {
+    "get": {
+      "tags": [
+        {
+          "name": "update Search Index"
+        }
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "200": {
+          "description": "OK"
+        },
+        "400": {
+          "description": "Failed. Bad GET data."
+        }
+      }
+    }
+  }
+
+  },
+
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "string"
+          },
+          "Pw":{
+            "type": "string"
+          }
+        }
+      },
+      "Allergy":{
+        "type" : "array",
+        "items" : {
+          "$ref" : "#/components/schemas/info"
+        }
+      },
+      "info":{
+        "type" : "object",
+        "properties":{
+          "Mname":{
+            "type":"string"
+          },
+          "Mmaterial":{
+            "type":"string"
+          },
+          "Symptom":{
+            "type":"string"
+          }
+        }
+      },
+      "image": {
+        "type": "object",
+        "properties": {
+          "image": {
+            "type": "string"
           }
         }
       }
     }
-  
+  }
+
 
 }

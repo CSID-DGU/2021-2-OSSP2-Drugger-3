@@ -8,6 +8,9 @@ from search import recognizeMedicine, searchMedicine
 from flask_swagger_ui import get_swaggerui_blueprint
 from elasticsearch import Elasticsearch
 from werkzeug.utils import secure_filename
+import os 
+import random
+from datetime import datetime
 
 # 데이터 베이스 불러오기
 app = Flask(__name__,static_url_path='',static_folder="static") #html 폴더 경로 설정
@@ -17,7 +20,6 @@ app.config.from_pyfile('config.py')
 database = create_engine(app.config['DB_URL'], encoding = 'utf-8', max_overflow = 0)
 Session = sessionmaker(database)
 db_session = Session()
-es = Elasticsearch(["34.125.3.13"], PORT=9200, http_auth=("elastic", "123456"))
 
 # swagger 설정 
 CORS(app)
@@ -87,23 +89,27 @@ def edit():
 
 @app.route('/ocr', methods=['POST'])
 def ocr() : 
+    random.seed(datetime.now())
+    rand = random.randint(0,10000000)
     image = request.files['file']
-    image.save('static/uploads/' + secure_filename(image.filename))
-    image_route = 'static/uploads/' + image.filename
+    filename = "image"+str(rand)
+    image.save('static/uploads/' + secure_filename(filename))
+    image_route = 'static/uploads/' + filename
     result = recognizeMedicine(image_route)
     return result
-
+    
 @app.route('/search', methods=['GET'])
 def search():
     mname = request.args.getlist('mname')
-    result = searchMedicine(es, mname)
+    result = searchMedicine(es, mname, embed)
     return jsonify(result)
 
 @app.route('/analysis', methods=['GET'])
 def analysis():
-    material = request.args.getlist('mmaterial')
-    result = medicineAnalysis(material, db_session, session)
+    mname = request.args.getlist('mname')
+    result = medicineAnalysis(mname, db_session, session)
     return jsonify(result)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

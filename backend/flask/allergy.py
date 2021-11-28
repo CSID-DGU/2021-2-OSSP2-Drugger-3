@@ -1,5 +1,7 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer
+from sqlalchemy.sql.sqltypes import TIMESTAMP
+from sqlalchemy.dialects.mysql import BIGINT
 
 Base = declarative_base()
 
@@ -17,6 +19,21 @@ class Allergy(Base):
         self.Mmaterial = Mmaterial
         self.Symptom = Symptom
 
+class Medicine(Base):
+    __tablename__ = 'MEDICINE'
+
+    id = Column(BIGINT(unsigned=True))
+    Mname = Column(String(100), nullable=False, primary_key=True)
+    Mmaterial = Column(String(100), nullable=False, primary_key=True)
+    modification_time = Column(TIMESTAMP, nullable=False)
+    insertion_time = Column(TIMESTAMP, nullable=False)
+
+    def __init__(self, id_num, Mname, modification_time, insertion_time):
+        self.id_num = id_num
+        self.Mname = Mname
+        self.Mmaterial = Mmaterial
+        self.modification_time = modification_time
+        self.insertion_time = insertion_time
 
 def getUserInfo(db_session, session):
     result = []
@@ -66,21 +83,27 @@ def deleteAllergy(infos, db_session, session):
         db_session.close()
     return "success"
 
-def medicineAnalysis(materials, db_session, session):
+def medicineAnalysis(mname, db_session, session):
     result = []
 
-    for material in materials:
+    for name in mname:
         analysis = {}
         try :
-            duplicate = db_session.query(Allergy).filter_by(Mmaterial=material).first()
-            if duplicate is not None:
-                analysis['material'] = material
-                analysis['status'] = 'DUPLICATE'
+            medicine = db_session.query(Medicine).filter_by(Mname=name).first()
+            if medicine is None:
+                analysis['material'] = 'None'
+                analysis['status'] = 'FAIL'
                 result.append(analysis)
-            else :
-                analysis['material'] = material
-                analysis['status'] = 'OK'
-                result.append(analysis)
+            else : 
+                duplicate = db_session.query(Allergy).filter_by(Mmaterial=medicine.Mmaterial, id_num=session['userID']).first()
+                if duplicate is not None:
+                    analysis['material'] = medicine.Mmaterial
+                    analysis['status'] = 'DUPLICATE'
+                    result.append(analysis)
+                else :
+                    analysis['material'] = medicine.Mmaterial
+                    analysis['status'] = 'OK'
+                    result.append(analysis)
 
         except:
             db_session.rollback()

@@ -17,6 +17,7 @@ def recognizeMedicine(image):
     information = extractedInformation.split("\n")
     result = {}
     new_string = []
+    word = ""
     for info in information:
         for i in range(0, len(info)) :
             if info[i] == '(':
