@@ -80,6 +80,7 @@ class MainActivity : AppCompatActivity() {
         }
         binding.EditButton.setOnClickListener(){
             val intent = Intent(this, EditActivity::class.java)
+            intent.putExtra("allergyList", allergyList)
             startActivity(intent)
             finish()
         }
@@ -130,7 +131,6 @@ class MainActivity : AppCompatActivity() {
                         val allergy = JSONObject(str)
                         val jsonArray = allergy.optJSONArray("result")
                         var i = 0
-                        var tableLayout = binding.tableLayout
                         while(i < jsonArray.length()){
                             val jsonObject = jsonArray.getJSONObject(i)
                             val material = jsonObject.getString("Mmaterial")
