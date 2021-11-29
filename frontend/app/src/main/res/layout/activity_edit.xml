@@ -23,13 +23,15 @@
         android:id="@+id/button3"
         android:layout_width="190dp"
         android:layout_height="60dp"
+        android:layout_marginStart="117dp"
+        android:layout_marginBottom="10dp"
         android:text="약물 알레르기 카드"
         android:textSize="18sp"
         android:textStyle="bold"
-        tools:ignore="MissingConstraints,TouchTargetSizeCheck"
-        tools:layout_editor_absoluteX="110dp"
-        tools:layout_editor_absoluteY="196dp" />
-
+        app:layout_constraintBottom_toTopOf="@+id/tableLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        tools:ignore="MissingConstraints,TouchTargetSizeCheck" />
 
     <TableLayout
         android:id="@+id/tableLayout"
@@ -92,7 +94,7 @@
     </TableLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/mRecyclerView"
+        android:id="@+id/mRecyclerView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@+id/plus"
@@ -108,6 +110,7 @@
         android:layout_height="50dp"
         android:layout_marginTop="544dp"
         android:contentDescription="@string/logo"
+        app:layout_constraintBottom_toTopOf="@+id/complete"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.792"
         app:layout_constraintStart_toStartOf="parent"
@@ -121,6 +124,7 @@
         android:layout_height="50dp"
         android:layout_marginTop="544dp"
         android:contentDescription="@string/logo"
+        app:layout_constraintBottom_toTopOf="@+id/complete"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.955"
         app:layout_constraintStart_toStartOf="parent"
@@ -146,16 +150,18 @@
         android:id="@+id/complete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="5dp"
         android:text="완료"
         android:textSize="18sp"
         android:textStyle="bold"
+        android:layout_marginStart="176dp"
+        android:layout_marginTop="37dp"
+        android:layout_marginEnd="175dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintHorizontal_bias="0.444"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scrollView2"
-        app:layout_constraintVertical_bias="0.496"
+        app:layout_constraintVertical_bias="0.686"
         tools:ignore="MissingConstraints,TouchTargetSizeCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -153,7 +153,7 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread(Runnable {
                     run(){
                         val mAdapter = MainRvAdapter(this@MainActivity, allergyList)
-                        val mRecyclerView = binding.mRecyclerView
+                        val mRecyclerView = binding.mRecyclerView1
                         mRecyclerView.adapter = mAdapter
 
                         val lm = LinearLayoutManager(this@MainActivity)

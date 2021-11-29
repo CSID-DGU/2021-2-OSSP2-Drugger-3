@@ -22,6 +22,7 @@ import java.io.IOException
 
 class EditActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEditBinding.inflate(layoutInflater)
@@ -33,6 +34,7 @@ class EditActivity : AppCompatActivity() {
 
         var cookie: String?
         cookie = MySharedPreferences.getMyCookie(this)
+        showAllergy(allergyList)
 
         binding.plus.setOnClickListener(){
             val intent = Intent(this, MainActivity::class.java)
@@ -40,7 +42,6 @@ class EditActivity : AppCompatActivity() {
             finish()
         }
         binding.minus.setOnClickListener(){
-            showAllergy(allergyList)
             /**checkbox id값 받아서 id마다 check 되었는지 확인(0부터 시작)됨, 반복문 돈다.
             if(check 되었다) check 된거 삭제
             id가 1이면 str_list[3], str_list[4], str_list[5]순으로 내용 담아서 delete 해야됨
@@ -77,6 +78,13 @@ class EditActivity : AppCompatActivity() {
             finish()
         }
 
+        binding.logout.setOnClickListener(){
+            val intent = Intent(this, LoginActivity::class.java)
+            MySharedPreferences.clearUser(this)
+            startActivity(intent)
+            finish()
+        }
+
     }
     private fun showAllergy(allergyList : ArrayList<Allergy>){
         Thread(){
@@ -84,7 +92,7 @@ class EditActivity : AppCompatActivity() {
                 runOnUiThread(Runnable {
                     run(){
                         val mAdapter = EditRvAdapter(this@EditActivity, allergyList)
-                        val mRecyclerView = binding.mRecyclerView
+                        val mRecyclerView = binding.mRecyclerView2
                         mRecyclerView.adapter = mAdapter
 
                         val lm = LinearLayoutManager(this@EditActivity)
