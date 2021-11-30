@@ -20,6 +20,7 @@ app.config.from_pyfile('config.py')
 database = create_engine(app.config['DB_URL'], encoding = 'utf-8', max_overflow = 0)
 Session = sessionmaker(database)
 db_session = Session()
+es = Elasticsearch(["34.125.3.13"], PORT=9200, http_auth=("elastic", "123456"))
 
 # swagger 설정 
 CORS(app)
