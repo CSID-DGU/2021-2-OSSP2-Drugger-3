@@ -71,7 +71,6 @@ class MainActivity : AppCompatActivity() {
         //테스트용으로 resultPage로 가게끔
         binding.imageView.setOnClickListener(){
             val intent = Intent(this, ResultActivity::class.java)
-            intent.putExtra("cookie", cookie)
             startActivity(intent)
             finish()
         }
