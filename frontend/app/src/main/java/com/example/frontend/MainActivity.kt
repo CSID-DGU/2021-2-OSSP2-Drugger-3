@@ -71,12 +71,28 @@ class MainActivity : AppCompatActivity() {
 
         loadInfo(cookie, this)
 
-        //테스트용으로 resultPage로 가게끔
-        binding.imageView.setOnClickListener(){
-            val intent = Intent(this, ResultActivity::class.java)
+        //검색버튼
+        binding.search.setOnClickListener(){
+            /*
+            val searchText = binding.searchText.text.toString()
+            if(searchText.isEmpty() || searchText.isBlank()){
+                Toast.makeText(this, "입력이 없습니다", Toast.LENGTH_SHORT).show()
+            }
+            //goto Select Activity with String Arr
+            else{
+                val search = ArrayList<String>()
+                search.add(searchText)
+
+                val intent = Intent(this, SearchActivity::class.java)
+                intent.putStringArrayListExtra("search", search)
+                startActivity(intent)
+            }
+            */
+            val intent = Intent(this, SearchActivity::class.java)
             startActivity(intent)
-            finish()
         }
+
+        //편집버튼
         binding.EditButton.setOnClickListener(){
             val intent = Intent(this, EditActivity::class.java)
             intent.putExtra("allergyList", allergyList)
@@ -97,6 +113,7 @@ class MainActivity : AppCompatActivity() {
             cameraLauncher.launch(tempImageUri)
         }
 
+        //로그아웃
         binding.logout.setOnClickListener(){
             val intent = Intent(this, LoginActivity::class.java)
             MySharedPreferences.clearUser(this)
