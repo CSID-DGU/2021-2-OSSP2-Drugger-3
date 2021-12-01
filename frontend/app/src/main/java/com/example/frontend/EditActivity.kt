@@ -2,14 +2,13 @@ package com.example.frontend
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
-import android.widget.CheckBox
-import android.widget.TableLayout
-import android.widget.TableRow
-import android.widget.TextView
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.frontend.databinding.ActivityEditBinding
@@ -18,10 +17,12 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import org.json.JSONObject
+import org.w3c.dom.Text
 import java.io.IOException
 
 class EditActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditBinding
+    private var allergy_list = ArrayList<String>();
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,11 +31,10 @@ class EditActivity : AppCompatActivity() {
         setContentView(view)
 
 
-        var allergyList = intent.getSerializableExtra("allergyList") as ArrayList<Allergy>
+        allergy_list = intent.getSerializableExtra("allergyList") as ArrayList<String>
 
-        var cookie: String?
-        cookie = MySharedPreferences.getMyCookie(this)
-        showAllergy(allergyList)
+        val cookie = MySharedPreferences.getMyCookie(this)
+        showAllergy()
 
         binding.plus.setOnClickListener(){
             val intent = Intent(this, MainActivity::class.java)
@@ -42,62 +42,154 @@ class EditActivity : AppCompatActivity() {
             finish()
         }
         binding.minus.setOnClickListener(){
-            /**checkbox id값 받아서 id마다 check 되었는지 확인(0부터 시작)됨, 반복문 돈다.
-            if(check 되었다) check 된거 삭제
-            id가 1이면 str_list[3], str_list[4], str_list[5]순으로 내용 담아서 delete 해야됨
-            다 하고나서 intent mainactivity*/
-            /**var temp = str_list.size/3
-            for(i: Int in 0..temp-1) {
-                if(i<temp){
-                    val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
-                    val json = JSONObject()
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("주의")
+                .setMessage("정말로 삭제하시겠습니까?")
+                .setPositiveButton("예", DialogInterface.OnClickListener{dialog, which->
+                    removeAllergy(cookie, this)
+                })
+                .setNegativeButton("아니오", DialogInterface.OnClickListener({dialog, which ->
 
-                    json.put("Mname", str_list[i*3])
-                    json.put("Mmaterial", str_list[i*3+1])
-                    json.put("Symptom", str_list[i*3+2])
-
-                    val body = RequestBody.create(JSON, json.toString())
-                    val request = Request.Builder()
-                        .url("http://34.125.3.13:8000/edit")
-                        .delete(body)
-                        .build()
-                    val client = OkHttpClient()
-
-                    client.newCall(request).enqueue(object: okhttp3.Callback{
-                        override fun onFailure(call: okhttp3.Call, e: IOException) {
-                            Log.d("connection", "fail")
-                        }
-                        override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                            Log.d("connection", "success")
-                        }
-                    })
-                }
-            }*/
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
+                }))
+            builder.show()
         }
 
         binding.logout.setOnClickListener(){
             val intent = Intent(this, LoginActivity::class.java)
             MySharedPreferences.clearUser(this)
+            logout(cookie, this)
             startActivity(intent)
             finish()
         }
 
     }
-    private fun showAllergy(allergyList : ArrayList<Allergy>){
+
+    private fun logout(cookie: String?, context: Context){
+        val request = cookie?.let {
+            Request.Builder()
+                .url("http://34.125.3.13:8000/logout")
+                .get()
+                .addHeader("Cookie", it)
+                .build()
+        }
+
+        val client = OkHttpClient()
+
+        if (request != null) {
+            client.newCall(request).enqueue(object: okhttp3.Callback{
+                override fun onFailure(call: okhttp3.Call, e: IOException) {
+                    Log.d("connection", "fail")
+                }
+                override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                    Log.d("connection", "success")
+
+                    if(response.isSuccessful){
+                        Log.d("logout", "success")
+                    }
+                }
+            })
+        }
+    }
+
+    private fun removeAllergy(cookie: String, context: Context){
+        val tableLayout = findViewById<TableLayout>(R.id.table_edit)
+        var row: TableRow
+        var ischeck: CheckBox
+        var medicine: TextView
+        var material: TextView
+        var symptom: TextView
+        var count = 0
+        for(i in 0 until tableLayout.childCount){
+            row = tableLayout.getChildAt(i) as TableRow
+            ischeck = row.getChildAt(0) as CheckBox
+            medicine = row.getChildAt(1) as TextView
+            material = row.getChildAt(2) as TextView
+            symptom = row.getChildAt(3) as TextView
+            if(ischeck.isChecked){
+                print(medicine.text.toString())
+                count++
+                val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
+                val json = JSONObject()
+
+                json.put("Mname", medicine.text.toString())
+                json.put("Mmaterial", material.text.toString())
+                json.put("Symptom", symptom.text.toString())
+
+                val body = RequestBody.create(JSON, json.toString())
+                val request = Request.Builder()
+                    .url("http://34.125.3.13:8000/edit")
+                    .delete(body)
+                    .addHeader("Cookie", cookie)
+                    .build()
+                val client = OkHttpClient()
+
+                client.newCall(request).enqueue(object: okhttp3.Callback{
+                    override fun onFailure(call: okhttp3.Call, e: IOException) {
+                        Log.d("connection", "fail")
+                    }
+                    override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                        Log.d("connection", "success")
+                        if(response.isSuccessful){
+                            val response = response.body?.string()
+                            Log.d("response", "success")
+                            println(response)
+                        }
+                    }
+                })
+            }
+        }
+        if (count>0)
+            toast("정상적으로 제거되었습니다.")
+        else
+            toast( "선택한 것이 없습니다.")
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+    private fun showAllergy(){
         Thread(){
             run(){
                 runOnUiThread(Runnable {
                     run(){
-                        val mAdapter = EditRvAdapter(this@EditActivity, allergyList)
-                        val mRecyclerView = binding.mRecyclerView2
-                        mRecyclerView.adapter = mAdapter
+                        val tableLayout = findViewById<TableLayout>(R.id.table_edit)
 
-                        val lm = LinearLayoutManager(this@EditActivity)
-                        mRecyclerView.layoutManager = lm
-                        mRecyclerView.setHasFixedSize(true)
+                        val rowLayoutParams = TableLayout.LayoutParams(
+                            TableLayout.LayoutParams.MATCH_PARENT,
+                            TableLayout.LayoutParams.MATCH_PARENT
+                        )
+                        val temp = allergy_list.size/3
+                        for (i : Int in 0 .. temp-1) {
+                            var tr = TableRow(this@EditActivity)
+                            tr.setLayoutParams(
+                                TableRow.LayoutParams(
+                                    TableRow.LayoutParams.FILL_PARENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT
+                                )
+                            )
+                            var t1 = CheckBox(this@EditActivity)
+                            var t2 = TextView(this@EditActivity)
+                            t2.setText(allergy_list[i*3])
+                            var t3 = TextView(this@EditActivity)
+                            t3.setText(allergy_list[i*3+1])
+                            var t4 = TextView(this@EditActivity)
+                            t4.setText(allergy_list[i*3+2])
+                            tr.addView(t1)
+                            tr.addView(t2)
+                            tr.addView(t3)
+                            tr.addView(t4)
+                            tableLayout.addView(tr)
+                        }
+                    }
+                })
+            }
+        }.start()
+    }
+    private fun toast(str: String){
+        Thread(){
+            run(){
+                runOnUiThread(Runnable {
+                    run(){
+                        Toast.makeText(applicationContext, str, Toast.LENGTH_SHORT).show()
                     }
                 })
             }
