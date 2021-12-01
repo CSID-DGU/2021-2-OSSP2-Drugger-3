@@ -44,22 +44,25 @@ class ResultActivity : AppCompatActivity() {
 
         val cookie = MySharedPreferences.getMyCookie(this)
 
-        //val targets = intent.getStringArrayListExtra("confirm") //searchPage에서 넘어올 때
-        val targets = arrayListOf<String>("게보린에프정", "낙센정", "타라신주", "메부톤정", "아스로펜정", "세로클캡슐", "룩펠정", "솔레톤정") //약물 이름으로 입력
+        val targets = intent.getStringArrayListExtra("confirm") //searchPage에서 넘어올 때
 
-        //request & load to UI by Thread
-        window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-        getResult(cookie, targets)
+        if(targets != null){
+            //request & load to UI by Thread
+            window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            getResult(cookie, targets)
 
-        //Just load Medicine Name with dynamic View generation
-        loadMedicine(targets)
+            //Just load Medicine Name with dynamic View generation
+            loadMedicine(targets)
 
-        //loading Dialog 설정 및 표시
-        loadingDialog = ProgressDialog(this, android.R.style.Theme_Material_Dialog_Alert)
-        loadingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
-        loadingDialog.setMessage("결과 받아오는 중...")
-        loadingDialog.setCanceledOnTouchOutside(false)
-        loadingDialog.show()
+            //loading Dialog 설정 및 표시
+            loadingDialog = ProgressDialog(this, android.R.style.Theme_Material_Dialog_Alert)
+            loadingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+            loadingDialog.setMessage("결과 받아오는 중...")
+            loadingDialog.setCanceledOnTouchOutside(false)
+            loadingDialog.show()
+        }else{
+            Toast.makeText(this, "결과가 없습니다.", Toast.LENGTH_SHORT).show()
+        }
 
         //완료버튼 클릭 to Main
         binding.toMain.setOnClickListener {
