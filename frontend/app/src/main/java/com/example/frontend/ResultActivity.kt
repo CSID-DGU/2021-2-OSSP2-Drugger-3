@@ -1,6 +1,8 @@
 package com.example.frontend
 
 import android.app.ActionBar
+import android.app.Dialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -11,10 +13,8 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TableLayout
-import android.widget.TableRow
-import android.widget.TextView
-import android.widget.Toast
+import android.view.WindowManager
+import android.widget.*
 import androidx.activity.result.ActivityResult
 import androidx.core.view.marginTop
 import androidx.core.view.setMargins
@@ -33,7 +33,8 @@ import kotlin.reflect.typeOf
 
 class ResultActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityResultBinding
+    private lateinit var binding: ActivityResultBinding
+    private lateinit var loadingDialog: ProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,29 +42,24 @@ class ResultActivity : AppCompatActivity() {
         var view = binding.root
         setContentView(view)
 
-        val cookie = intent.getStringExtra("cookie")
+        val cookie = MySharedPreferences.getMyCookie(this)
 
         //val targets = intent.getStringArrayListExtra("confirm") //searchPage에서 넘어올 때
-        //val targets = arrayListOf<String>("게보린에프정", "낙센정") //약물 이름으로 입력
-        val targets = arrayListOf<String>( //for Testing, 약물 주성분 입력
-            "이부프로펜", "낙프록센", "아목시실린")
-        /*
-
-            , "케토롤락", "세파클러",
-            "나부메톤", "세푸록심", "세프프로질", "아세클로페낙", "록소프로펜",
-            "레보플록사신", "프록시캄", "아스피린", "암피실린", "세파드록실",
-            "오플록사신", "잘토프로펜")
-
-
-         */ //this is testing for scrolling
-
+        val targets = arrayListOf<String>("게보린에프정", "낙센정", "타라신주", "메부톤정", "아스로펜정", "세로클캡슐", "룩펠정", "솔레톤정") //약물 이름으로 입력
 
         //request & load to UI by Thread
+        window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
         getResult(cookie, targets)
 
-        //Just load Medicine Name with dinamic View generation
+        //Just load Medicine Name with dynamic View generation
         loadMedicine(targets)
-        Toast.makeText(this,"결과 받아오는 중...", Toast.LENGTH_SHORT).show()
+
+        //loading Dialog 설정 및 표시
+        loadingDialog = ProgressDialog(this, android.R.style.Theme_Material_Dialog_Alert)
+        loadingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        loadingDialog.setMessage("결과 받아오는 중...")
+        loadingDialog.setCanceledOnTouchOutside(false)
+        loadingDialog.show()
 
         //완료버튼 클릭 to Main
         binding.toMain.setOnClickListener {
@@ -76,7 +72,7 @@ class ResultActivity : AppCompatActivity() {
     private fun getResult(ck: String?, args: ArrayList<String>){
         val urlBuilder: HttpUrl.Builder = "http://34.125.3.13:8000/analysis".toHttpUrl().newBuilder()
         args.forEach {
-            urlBuilder.addQueryParameter("mmaterial", it)
+            urlBuilder.addQueryParameter("mname", it)
         }
         val url = urlBuilder.build()
 
@@ -100,16 +96,16 @@ class ResultActivity : AppCompatActivity() {
                         val response = response.body?.string()
                         val responseArr = JSONArray(response)
 
-                        var result = ArrayList<String>()
+                        var material = ArrayList<String>()
                         var stat = ArrayList<String>()
                         for(i in 0 until responseArr.length()){
                             val elem = responseArr.getJSONObject(i)
-                            result.add(elem.getString("material"))
+                            material.add(elem.getString("material"))
                             stat.add(elem.getString("status"))
                         }
 
                         //update UI with result
-                        loadResult(result, stat)
+                        loadResult(material, stat)
                     } else { //not success!
                         Log.d("connection", "Bad")
                     }
@@ -145,7 +141,7 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
-    fun loadResult(result: ArrayList<String>, status: ArrayList<String>){
+    fun loadResult(material: ArrayList<String>, status: ArrayList<String>){
         Thread(){
             run(){
                 runOnUiThread(Runnable {
@@ -160,7 +156,7 @@ class ResultActivity : AppCompatActivity() {
                             content = row.getChildAt(0) as TextView
 
                             str = content.text.toString()
-                            str += " (${result[i]})"
+                            str += " (${material[i]})"
                             content.text = str
 
                             if(status[i] == "DUPLICATE"){
@@ -171,6 +167,9 @@ class ResultActivity : AppCompatActivity() {
                                 content.setTextColor(Color.BLACK)
                             }
                         }
+
+                        loadingDialog.dismiss()
+                        window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                     }
                 })
             }
