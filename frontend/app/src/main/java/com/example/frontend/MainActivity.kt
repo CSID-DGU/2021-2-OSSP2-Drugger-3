@@ -6,12 +6,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.os.FileUtils
 import android.provider.MediaStore
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -39,7 +41,7 @@ import okhttp3.*
 class MainActivity : AppCompatActivity() {
     //ViewBinding
     private lateinit var binding: ActivityMainBinding
-    private var allergyList = arrayListOf<Allergy>()
+    private var allergy_list = ArrayList<String>();
 
     //Permissions
     private val PERMISSIONS = arrayOf(
@@ -95,20 +97,19 @@ class MainActivity : AppCompatActivity() {
         //편집버튼
         binding.EditButton.setOnClickListener(){
             val intent = Intent(this, EditActivity::class.java)
-            intent.putExtra("allergyList", allergyList)
+            intent.putExtra("allergyList", allergy_list)
             startActivity(intent)
-            finish()
         }
 
         //카메라 아이콘 클릭
         binding.camera.setOnClickListener() {
             //카메라 권한 확인
-            checkPermission(PERMISSIONS, PERMISSION_REQUEST)
-
-            //tempImage Uri & FilePath 생성
-            tempImageUri = FileProvider.getUriForFile(this, "com.example.frontend.fileprovider", createImageFile().also{
-                tempImageFilePath = it.absolutePath
-            })
+            if(checkPermission(PERMISSIONS, PERMISSION_REQUEST)){
+                //tempImage Uri & FilePath 생성
+                tempImageUri = FileProvider.getUriForFile(this, "com.example.frontend.fileprovider", createImageFile().also{
+                    tempImageFilePath = it.absolutePath
+                })
+            }
             //카메라 앱 실행
             cameraLauncher.launch(tempImageUri)
         }
@@ -117,8 +118,36 @@ class MainActivity : AppCompatActivity() {
         binding.logout.setOnClickListener(){
             val intent = Intent(this, LoginActivity::class.java)
             MySharedPreferences.clearUser(this)
+            logout(cookie, this)
             startActivity(intent)
             finish()
+        }
+    }
+
+    private fun logout(cookie: String?, context: Context){
+        val request = cookie?.let {
+            Request.Builder()
+                .url("http://34.125.3.13:8000/logout")
+                .get()
+                .addHeader("Cookie", it)
+                .build()
+        }
+
+        val client = OkHttpClient()
+
+        if (request != null) {
+            client.newCall(request).enqueue(object: okhttp3.Callback{
+                override fun onFailure(call: okhttp3.Call, e: IOException) {
+                    Log.d("connection", "fail")
+                }
+                override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                    Log.d("connection", "success")
+
+                    if(response.isSuccessful){
+                        Log.d("logout", "success")
+                    }
+                }
+            })
         }
     }
 
@@ -152,10 +181,11 @@ class MainActivity : AppCompatActivity() {
                             val material = jsonObject.getString("Mmaterial")
                             val medicine = jsonObject.getString("Mname")
                             val symptom = jsonObject.getString("Symptom")
-                            allergyList.add(Allergy(medicine, material, symptom))
+                            allergy_list.add(medicine)
+                            allergy_list.add(material)
+                            allergy_list.add(symptom)
                             i++
                         }
-                        println(allergyList)
                         showAllergy()
                     }
                 }
@@ -168,13 +198,33 @@ class MainActivity : AppCompatActivity() {
             run(){
                 runOnUiThread(Runnable {
                     run(){
-                        val mAdapter = MainRvAdapter(this@MainActivity, allergyList)
-                        val mRecyclerView = binding.mRecyclerView1
-                        mRecyclerView.adapter = mAdapter
+                        val tableLayout = findViewById<TableLayout>(R.id.table_main)
 
-                        val lm = LinearLayoutManager(this@MainActivity)
-                        mRecyclerView.layoutManager = lm
-                        mRecyclerView.setHasFixedSize(true)
+                        val rowLayoutParams = TableLayout.LayoutParams(
+                            TableLayout.LayoutParams.MATCH_PARENT,
+                            TableLayout.LayoutParams.MATCH_PARENT
+                        )
+                        val temp = allergy_list.size/3
+                        for (i : Int in 0 .. temp-1) {
+                            var tr = TableRow(this@MainActivity)
+                            tr.setLayoutParams(
+                                TableRow.LayoutParams(
+                                    TableRow.LayoutParams.FILL_PARENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT
+                                )
+                            )
+                            var t1 = TextView(this@MainActivity)
+                            t1.setText(allergy_list[i*3])
+                            t1
+                            var t2 = TextView(this@MainActivity)
+                            t2.setText(allergy_list[i*3+1])
+                            var t3 = TextView(this@MainActivity)
+                            t3.setText(allergy_list[i*3+2])
+                            tr.addView(t1)
+                            tr.addView(t2)
+                            tr.addView(t3)
+                            tableLayout.addView(tr)
+                        }
                     }
                 })
             }
