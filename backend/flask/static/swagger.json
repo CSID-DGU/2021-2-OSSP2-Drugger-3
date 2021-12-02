@@ -183,7 +183,7 @@
           }
         }
       },
-      "delete":{
+      "put":{
         "tags":[
           {
             "name" : "Delete allergy data"
