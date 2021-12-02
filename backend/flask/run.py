@@ -76,7 +76,7 @@ def main2(id):
     result, state = getUserInfo(db_session, userId)
     return {"result" : result, "state" : state}
 
-@app.route('/edit', methods=['POST', 'DELETE'])
+@app.route('/edit', methods=['POST', 'PUT'])
 def edit():
     data=request.get_json()
     info = data
@@ -102,7 +102,7 @@ def ocr() :
 @app.route('/search', methods=['GET'])
 def search():
     mname = request.args.getlist('mname')
-    result = searchMedicine(es, mname, embed)
+    result = searchMedicine(es, mname)
     return jsonify(result)
 
 @app.route('/analysis', methods=['GET'])
