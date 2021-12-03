@@ -19,31 +19,38 @@
         app:srcCompat="@drawable/logo"
         tools:ignore="ImageContrastCheck" />
 
-    <Button
+
+    <TextView
         android:id="@+id/button3"
         android:layout_width="190dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="117dp"
-        android:layout_marginEnd="50dp"
-        android:layout_marginBottom="10dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/rounding"
+        android:fontFamily="sans-serif"
+        android:gravity="center"
         android:text="약물 알레르기 카드"
+        android:textAlignment="center"
+        android:textColor="@color/white"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/tableLayout"
-        app:layout_constraintEnd_toStartOf="@+id/EditButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchText"
         tools:ignore="MissingConstraints,TouchTargetSizeCheck" />
-
 
     <ImageView
         android:id="@+id/EditButton"
         android:layout_width="45dp"
         android:layout_height="45dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="188dp"
-        app:layout_constraintStart_toEndOf="@+id/button3"
-        app:layout_constraintTop_toTopOf="@id/imageView"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="button3"
+        app:layout_constraintTop_toBottomOf="@id/searchText"
         app:srcCompat="@drawable/list"
         tools:ignore="MissingConstraints" />
 
@@ -51,7 +58,7 @@
             android:id="@+id/tableLayout"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="5dp"
             android:backgroundTint="@color/actionColor"
             android:stretchColumns="0,1,2"
@@ -72,6 +79,8 @@
                 android:background="@android:color/darker_gray"
                 android:backgroundTint="@android:color/darker_gray"
                 android:text="약물이름"
+                android:textAlignment="center"
+                android:gravity="center"
                 android:textSize="25sp"
                 android:textStyle="bold" />
 
@@ -82,16 +91,20 @@
                 android:background="@android:color/darker_gray"
                 android:backgroundTint="@android:color/darker_gray"
                 android:text="주성분"
+                android:textAlignment="center"
+                android:gravity="center"
                 android:textSize="25sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/textView42"
-                android:layout_width="120dp"
+                android:layout_width="98dp"
                 android:layout_height="40dp"
                 android:background="@android:color/darker_gray"
                 android:backgroundTint="@android:color/darker_gray"
                 android:text="반응"
+                android:textAlignment="center"
+                android:gravity="center"
                 android:textSize="25sp"
                 android:textStyle="bold" />
         </TableRow>
@@ -112,7 +125,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/actionColor"
-            android:stretchColumns="0"
+            android:stretchColumns="0,1,2"
             app:layout_constraintBottom_toTopOf="@+id/camera"
             app:layout_constraintTop_toBottomOf="@+id/tableLayout"
             app:layout_constraintVertical_bias="0.0"
@@ -126,7 +139,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="10dp"
         android:ems="10"
         android:hint="약물 이름을 검색하세요"
         android:inputType="textPersonName"

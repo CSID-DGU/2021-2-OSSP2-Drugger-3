@@ -204,12 +204,12 @@ class MainActivity : AppCompatActivity() {
                         for (i : Int in 0 .. temp-1) {
                             var tr = TableRow(this@MainActivity)
                             val textViewLayoutParams = TableRow.LayoutParams(
+                                160,
                                 TableRow.LayoutParams.MATCH_PARENT
                             )
                             tr.setBackgroundColor(Color.WHITE)
                             var t1 = TextView(this@MainActivity)
                             t1.setText(allergy_list[i*3])
-                            t1
                             var t2 = TextView(this@MainActivity)
                             t2.setText(allergy_list[i*3+1])
                             var t3 = TextView(this@MainActivity)
