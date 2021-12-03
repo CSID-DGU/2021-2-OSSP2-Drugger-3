@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.marginBottom
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.frontend.databinding.ActivityMainBinding
@@ -75,7 +76,6 @@ class MainActivity : AppCompatActivity() {
 
         //검색버튼
         binding.search.setOnClickListener(){
-            /*
             val searchText = binding.searchText.text.toString()
             if(searchText.isEmpty() || searchText.isBlank()){
                 Toast.makeText(this, "입력이 없습니다", Toast.LENGTH_SHORT).show()
@@ -89,9 +89,6 @@ class MainActivity : AppCompatActivity() {
                 intent.putStringArrayListExtra("search", search)
                 startActivity(intent)
             }
-            */
-            val intent = Intent(this, SearchActivity::class.java)
-            startActivity(intent)
         }
 
         //편집버튼
@@ -206,12 +203,10 @@ class MainActivity : AppCompatActivity() {
                         val temp = allergy_list.size/3
                         for (i : Int in 0 .. temp-1) {
                             var tr = TableRow(this@MainActivity)
-                            tr.setLayoutParams(
-                                TableRow.LayoutParams(
-                                    TableRow.LayoutParams.FILL_PARENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                                )
+                            val textViewLayoutParams = TableRow.LayoutParams(
+                                TableRow.LayoutParams.MATCH_PARENT
                             )
+                            tr.setBackgroundColor(Color.WHITE)
                             var t1 = TextView(this@MainActivity)
                             t1.setText(allergy_list[i*3])
                             t1
@@ -219,10 +214,10 @@ class MainActivity : AppCompatActivity() {
                             t2.setText(allergy_list[i*3+1])
                             var t3 = TextView(this@MainActivity)
                             t3.setText(allergy_list[i*3+2])
-                            tr.addView(t1)
-                            tr.addView(t2)
-                            tr.addView(t3)
-                            tableLayout.addView(tr)
+                            tr.addView(t1, textViewLayoutParams)
+                            tr.addView(t2, textViewLayoutParams)
+                            tr.addView(t3, textViewLayoutParams)
+                            tableLayout.addView(tr, rowLayoutParams)
                         }
                     }
                 })
