@@ -16,6 +16,8 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.Response
+import org.json.JSONArray
 import org.json.JSONObject
 import org.w3c.dom.Text
 import java.io.IOException
@@ -91,7 +93,7 @@ class EditActivity : AppCompatActivity() {
         }
     }
 
-    private fun removeAllergy(cookie: String, context: Context){
+    private fun removeAllergy(cookie: String?, context: Context){
         val tableLayout = findViewById<TableLayout>(R.id.table_edit)
         var row: TableRow
         var ischeck: CheckBox
@@ -99,6 +101,8 @@ class EditActivity : AppCompatActivity() {
         var material: TextView
         var symptom: TextView
         var count = 0
+        val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
+        var json_array = JSONArray()
         for(i in 0 until tableLayout.childCount){
             row = tableLayout.getChildAt(i) as TableRow
             ischeck = row.getChildAt(0) as CheckBox
@@ -106,37 +110,43 @@ class EditActivity : AppCompatActivity() {
             material = row.getChildAt(2) as TextView
             symptom = row.getChildAt(3) as TextView
             if(ischeck.isChecked){
-                print(medicine.text.toString())
-                count++
-                val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
+                println(medicine.text.toString())
+                println(material.text.toString())
+                println(symptom.text.toString())
                 val json = JSONObject()
 
                 json.put("Mname", medicine.text.toString())
                 json.put("Mmaterial", material.text.toString())
                 json.put("Symptom", symptom.text.toString())
-
-                val body = RequestBody.create(JSON, json.toString())
-                val request = Request.Builder()
-                    .url("http://34.125.3.13:8000/edit")
-                    .delete(body)
-                    .addHeader("Cookie", cookie)
-                    .build()
-                val client = OkHttpClient()
-
-                client.newCall(request).enqueue(object: okhttp3.Callback{
-                    override fun onFailure(call: okhttp3.Call, e: IOException) {
-                        Log.d("connection", "fail")
-                    }
-                    override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                        Log.d("connection", "success")
-                        if(response.isSuccessful){
-                            val response = response.body?.string()
-                            Log.d("response", "success")
-                            println(response)
-                        }
-                    }
-                })
+                print(json.toString())
+                json_array.put(json)
             }
+        }
+        val body = RequestBody.create(JSON, json_array.toString())
+        if(cookie != null) {
+            val request = Request.Builder()
+                .addHeader("Cookie", cookie)
+                .url("http://34.125.3.13:8000/edit")
+                .put(body)
+                .build()
+
+            //솔레톤정 잘토프로펜   오심
+            val client = OkHttpClient()
+            client.newCall(request).enqueue(object : okhttp3.Callback {
+                override fun onFailure(call: okhttp3.Call, e: IOException) {
+                    Log.d("connection", "fail")
+                }
+
+                override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                    Log.d("connection", "success")
+                    if (response.isSuccessful) {
+                        val response = response.body?.string()
+                        count++
+                        print("response : ")
+                        println(response)
+                    }
+                }
+            })
         }
         if (count>0)
             toast("정상적으로 제거되었습니다.")

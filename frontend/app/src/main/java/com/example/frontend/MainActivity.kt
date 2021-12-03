@@ -172,7 +172,6 @@ class MainActivity : AppCompatActivity() {
 
                     if(response.isSuccessful){
                         val str = response.body?.string()
-                        println("str1 : ${str}")
                         val allergy = JSONObject(str)
                         val jsonArray = allergy.optJSONArray("result")
                         var i = 0
