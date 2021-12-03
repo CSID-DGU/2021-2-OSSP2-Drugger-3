@@ -3,6 +3,7 @@ package com.example.frontend
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -21,6 +22,9 @@ import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONObject
 import org.opencv.android.OpenCVLoader
+import org.opencv.android.Utils
+import org.opencv.core.Mat
+import org.opencv.imgproc.Imgproc
 import java.io.*
 
 class ocrActivity : AppCompatActivity() {
@@ -50,14 +54,27 @@ class ocrActivity : AppCompatActivity() {
         val strImageUri = intent.getStringExtra("URI")
         val imageUri = Uri.parse(strImageUri)
 
+        //실제 코드
+        /*
         binding.inputImg.setImageURI(imageUri)
 
         //ImageProcessing
+        val grayedImage = getGrayscaledImage(imageUri)
+         */
 
+        //테스트 이미지로
+        val testImage = BitmapFactory.decodeResource(resources, R.drawable.parentest)
+        val grayedImage = getGrayscaledImage_test(testImage)
 
-        val contentUri = getUri(imageUri)
+        binding.inputImg.setImageBitmap(grayedImage)
+
+        //Uri to realPath
+        val contentUri = getContentUri(grayedImage)
         val realPath = getAbPath(contentUri)
         var resultText = ""
+
+        println(contentUri)
+        println(realPath)
 
         if(realPath != null){
             resultText = coroutine(realPath)
@@ -78,7 +95,7 @@ class ocrActivity : AppCompatActivity() {
             }
             //goto Select Activity with String Arr
             else{
-                //inputText -> selectActivity로 전달
+                //inputText -> searchActivity로 전달
                 val resultArr = inputText.split("\n")
                 val intent = Intent(this, SearchActivity::class.java)
                 intent.putExtra("input", ArrayList(resultArr))
@@ -87,24 +104,13 @@ class ocrActivity : AppCompatActivity() {
         }
     }
 
-    private fun getUri(uri: Uri): Uri {
-        // URI -> Bitmap -> MediaStore를 이용해 external storage에 저장
-        val bitmap = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
-            val source = ImageDecoder.createSource(contentResolver, uri)
-            ImageDecoder.decodeBitmap(source){ decoder, _, _ ->
-                decoder.isMutableRequired = true
-            }
-        }else{
-            MediaStore.Images.Media.getBitmap(contentResolver, uri)
-        }
-
+    private fun getContentUri(bitmap: Bitmap): Uri {
         val bytes = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
         val contentPath = MediaStore.Images.Media.insertImage(
             this.contentResolver, bitmap, "cropped", null)
         val contentUri = Uri.parse(contentPath)
         return contentUri
-
     }
 
     @SuppressLint("Range")
@@ -123,7 +129,9 @@ class ocrActivity : AppCompatActivity() {
             val temp = CoroutineScope(Dispatchers.IO).async {
                 getOCR(imgUrl)
             }.await()
+            println(temp)
             result = JSONObject(temp)
+            println(result)
             val jsonArray = result.optJSONArray("medicine")
             var i = 0
             while(i < jsonArray.length()){
@@ -143,16 +151,14 @@ class ocrActivity : AppCompatActivity() {
         val MEDIA_TYPE = "image/jpg".toMediaTypeOrNull()
         val filename: String = imgUrl.substring(imgUrl.lastIndexOf("/") + 1)
 
-
         val body = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart("file", filename, RequestBody.create(MEDIA_TYPE, sourceFile))
             .build()
 
-
         val request = Request.Builder()
             .url("http://34.125.3.13:8000/ocr")
-            .post(body) //body 셋팅 필요
+            .post(body)
             .build()
         val client = OkHttpClient.Builder().build()
 
@@ -164,5 +170,39 @@ class ocrActivity : AppCompatActivity() {
             }
         }
     }
+    //Image Processing with openCV
+    private fun getGrayscaledImage(uri: Uri): Bitmap{
+        //get bitmap from Uri
+        val bitmap = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
+            val source = ImageDecoder.createSource(contentResolver, uri)
+            ImageDecoder.decodeBitmap(source){ decoder, _, _ ->
+                decoder.isMutableRequired = true
+            }
+        }else{
+            MediaStore.Images.Media.getBitmap(contentResolver, uri)
+        }
 
+        //create openCV mat object & copy content from bitmap
+        var mat = Mat()
+        Utils.bitmapToMat(bitmap, mat)
+
+        //convert to grayscale
+        val grayedBitmap: Bitmap = bitmap
+        Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2GRAY)
+        Utils.matToBitmap(mat, grayedBitmap)
+
+        return grayedBitmap
+    }
+    private fun getGrayscaledImage_test(bitmap: Bitmap): Bitmap{
+        //create openCV mat object & copy content from bitmap
+        var mat = Mat()
+        Utils.bitmapToMat(bitmap, mat)
+
+        //convert to grayscale
+        val grayedBitmap: Bitmap = bitmap
+        Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2GRAY)
+        Utils.matToBitmap(mat, grayedBitmap)
+
+        return grayedBitmap
+    }
 }
