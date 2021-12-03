@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
@@ -19,9 +20,23 @@ import kotlinx.coroutines.launch
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONObject
+import org.opencv.android.OpenCVLoader
 import java.io.*
 
 class ocrActivity : AppCompatActivity() {
+
+    //Used to load the 'native-lib' library on application startUp
+    companion object{
+        init{
+            if(!OpenCVLoader.initDebug()){
+                Log.d("OCR_activity", "openCV is not loaded!")
+            }
+            else{
+                Log.d("OCR_activity", "openCV is loaded, successfully!")
+            }
+        }
+    }
+
     //ViewBinding
     private lateinit var binding:ActivityOcrBinding
 
@@ -36,6 +51,9 @@ class ocrActivity : AppCompatActivity() {
         val imageUri = Uri.parse(strImageUri)
 
         binding.inputImg.setImageURI(imageUri)
+
+        //ImageProcessing
+
 
         val contentUri = getUri(imageUri)
         val realPath = getAbPath(contentUri)
