@@ -13,9 +13,7 @@ import android.os.Environment
 import android.os.FileUtils
 import android.provider.MediaStore
 import android.util.Log
-import android.view.Gravity
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.*
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -39,6 +37,24 @@ import java.util.jar.Manifest
 import okhttp3.*
 
 class MainActivity : AppCompatActivity() {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflator = menuInflater
+        inflator.inflate(R.menu.menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val cookie = MySharedPreferences.getMyCookie(this)
+        MySharedPreferences.clearUser(this)
+        logout(cookie, this)
+
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
+
+        return super.onOptionsItemSelected(item)
+    }
+
     //ViewBinding
     private lateinit var binding: ActivityMainBinding
     private var allergy_list = ArrayList<String>();
@@ -68,14 +84,12 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        var cookie: String?
-        cookie = MySharedPreferences.getMyCookie(this)
+        val cookie = MySharedPreferences.getMyCookie(this)
 
         loadInfo(cookie, this)
 
         //검색버튼
         binding.search.setOnClickListener(){
-            /*
             val searchText = binding.searchText.text.toString()
             if(searchText.isEmpty() || searchText.isBlank()){
                 Toast.makeText(this, "입력이 없습니다", Toast.LENGTH_SHORT).show()
@@ -89,9 +103,6 @@ class MainActivity : AppCompatActivity() {
                 intent.putStringArrayListExtra("search", search)
                 startActivity(intent)
             }
-            */
-            val intent = Intent(this, SearchActivity::class.java)
-            startActivity(intent)
         }
 
         //편집버튼
@@ -112,15 +123,6 @@ class MainActivity : AppCompatActivity() {
             }
             //카메라 앱 실행
             cameraLauncher.launch(tempImageUri)
-        }
-
-        //로그아웃
-        binding.logout.setOnClickListener(){
-            val intent = Intent(this, LoginActivity::class.java)
-            MySharedPreferences.clearUser(this)
-            logout(cookie, this)
-            startActivity(intent)
-            finish()
         }
     }
 
