@@ -10,4 +10,5 @@
     <string name="login">로그인</string>
     <string name="join">회원가입</string>
     <string name="autoLogin">자동로그인</string>
+    <string name="logoutTitle">로그아웃</string>
 </resources>
