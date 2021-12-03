@@ -109,9 +109,9 @@ class MainActivity : AppCompatActivity() {
                 tempImageUri = FileProvider.getUriForFile(this, "com.example.frontend.fileprovider", createImageFile().also{
                     tempImageFilePath = it.absolutePath
                 })
+                //카메라 앱 실행
+                cameraLauncher.launch(tempImageUri)
             }
-            //카메라 앱 실행
-            cameraLauncher.launch(tempImageUri)
         }
 
         //로그아웃
@@ -245,11 +245,21 @@ class MainActivity : AppCompatActivity() {
                 permissionList.add(permission)
             }
         }
+        //권한 요청
         if(permissionList.isNotEmpty()){
             ActivityCompat.requestPermissions(this, permissionList.toTypedArray(), PERMISSION_REQUEST)
-            return false;
         }
-        return true;
+        //재검사
+        for(permission in permissions){
+            val result = ContextCompat.checkSelfPermission(this, permission)
+            if(result != PackageManager.PERMISSION_GRANTED){
+                permissionList.add(permission)
+            }
+        }
+        if(permissionList.isNotEmpty()){
+            return false
+        }
+        return true
     }
 
     override fun onRequestPermissionsResult(
