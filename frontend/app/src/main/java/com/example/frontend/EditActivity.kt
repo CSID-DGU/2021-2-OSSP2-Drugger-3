@@ -110,6 +110,7 @@ class EditActivity : AppCompatActivity() {
             material = row.getChildAt(2) as TextView
             symptom = row.getChildAt(3) as TextView
             if(ischeck.isChecked){
+                count++
                 println(medicine.text.toString())
                 println(material.text.toString())
                 println(symptom.text.toString())
@@ -141,7 +142,6 @@ class EditActivity : AppCompatActivity() {
                     Log.d("connection", "success")
                     if (response.isSuccessful) {
                         val response = response.body?.string()
-                        count++
                         print("response : ")
                         println(response)
                     }
