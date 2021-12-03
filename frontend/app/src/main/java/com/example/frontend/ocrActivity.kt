@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
@@ -19,6 +18,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import org.json.JSONObject
 import java.io.*
 
 class ocrActivity : AppCompatActivity() {
@@ -61,8 +61,9 @@ class ocrActivity : AppCompatActivity() {
             //goto Select Activity with String Arr
             else{
                 //inputText -> selectActivity로 전달
-                val intent = Intent(this, TempActivity::class.java)
-                intent.putExtra("input", inputText)
+                val resultArr = inputText.split("\n")
+                val intent = Intent(this, SearchActivity::class.java)
+                intent.putExtra("input", ArrayList(resultArr))
                 startActivity(intent)
             }
         }
@@ -71,14 +72,6 @@ class ocrActivity : AppCompatActivity() {
     private fun getUri(uri: Uri): Uri {
         // URI -> Bitmap -> MediaStore를 이용해 external storage에 저장
         val bitmap = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
-            // https://developer.android.com/reference/android/graphics/ImageDecoder
-            // CvException [org.opencv.core.CvException: OpenCV(4.1.1) /build/master_pack-android/opencv/modules/java/generator/src/cpp/utils.cpp:38: error: (-215:Assertion failed) AndroidBitmap_lockPixels(env, bitmap, &pixels) >= 0
-            /*
-                  By default, a Bitmap created by ImageDecoder (including one that is inside a Drawable)
-                  will be immutable (i.e. Bitmap#isMutable returns false), and it will typically
-                  have Config Bitmap.Config#HARDWARE. Although these properties can be change
-                  with setMutableRequired(true)
-                 */
             val source = ImageDecoder.createSource(contentResolver, uri)
             ImageDecoder.decodeBitmap(source){ decoder, _, _ ->
                 decoder.isMutableRequired = true
@@ -106,15 +99,25 @@ class ocrActivity : AppCompatActivity() {
     }
 
     private fun coroutine(imgUrl : String): String{
-        var result = ""
+        var str = ""
+        var result :JSONObject
         CoroutineScope(Dispatchers.Main).launch{
-            result = CoroutineScope(Dispatchers.IO).async {
+            val temp = CoroutineScope(Dispatchers.IO).async {
                 getOCR(imgUrl)
             }.await()
-            //이 부분 수정 바람
-            binding.returnOCR.setText(result) //returnOCR 요소에 처리된 텍스트 출력
+            result = JSONObject(temp)
+            val jsonArray = result.optJSONArray("medicine")
+            var i = 0
+            while(i < jsonArray.length()){
+                str += (jsonArray[i] as String)
+                if(i != jsonArray.length()-1)
+                    str += "\n"
+                i++
+            }
+            str = str.substring(str.lastIndexOf("/") + 1)
+            binding.returnOCR.setText(str) //returnOCR 요소에 처리된 텍스트 출력
         }
-        return result
+        return str
     }
 
     private fun getOCR(imgUrl: String): String {
@@ -130,7 +133,7 @@ class ocrActivity : AppCompatActivity() {
 
 
         val request = Request.Builder()
-            .url("http://http://34.125.3.13:8000/ocr")
+            .url("http://34.125.3.13:8000/ocr")
             .post(body) //body 셋팅 필요
             .build()
         val client = OkHttpClient.Builder().build()
