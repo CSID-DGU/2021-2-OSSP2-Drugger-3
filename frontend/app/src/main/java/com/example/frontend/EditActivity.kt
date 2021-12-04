@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
@@ -21,6 +22,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.w3c.dom.Text
 import java.io.IOException
+import java.time.format.TextStyle
 
 class EditActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditBinding
@@ -31,7 +33,6 @@ class EditActivity : AppCompatActivity() {
         binding = ActivityEditBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
 
         allergy_list = intent.getSerializableExtra("allergyList") as ArrayList<String>
 
@@ -47,50 +48,14 @@ class EditActivity : AppCompatActivity() {
             val builder = AlertDialog.Builder(this)
             builder.setTitle("주의")
                 .setMessage("정말로 삭제하시겠습니까?")
-                .setPositiveButton("예", DialogInterface.OnClickListener{dialog, which->
-                    removeAllergy(cookie, this)
+                .setPositiveButton("아니오", DialogInterface.OnClickListener{dialog, which->
                 })
-                .setNegativeButton("아니오", DialogInterface.OnClickListener({dialog, which ->
-
+                .setNegativeButton("예", DialogInterface.OnClickListener({dialog, which ->
+                    removeAllergy(cookie, this)
                 }))
             builder.show()
         }
 
-        binding.logout.setOnClickListener(){
-            val intent = Intent(this, LoginActivity::class.java)
-            MySharedPreferences.clearUser(this)
-            logout(cookie, this)
-            startActivity(intent)
-            finish()
-        }
-
-    }
-
-    private fun logout(cookie: String?, context: Context){
-        val request = cookie?.let {
-            Request.Builder()
-                .url("http://34.125.3.13:8000/logout")
-                .get()
-                .addHeader("Cookie", it)
-                .build()
-        }
-
-        val client = OkHttpClient()
-
-        if (request != null) {
-            client.newCall(request).enqueue(object: okhttp3.Callback{
-                override fun onFailure(call: okhttp3.Call, e: IOException) {
-                    Log.d("connection", "fail")
-                }
-                override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                    Log.d("connection", "success")
-
-                    if(response.isSuccessful){
-                        Log.d("logout", "success")
-                    }
-                }
-            })
-        }
     }
 
     private fun removeAllergy(cookie: String?, context: Context){
@@ -130,7 +95,6 @@ class EditActivity : AppCompatActivity() {
                 .put(body)
                 .build()
 
-            //솔레톤정 잘토프로펜   오심
             val client = OkHttpClient()
             client.newCall(request).enqueue(object : okhttp3.Callback {
                 override fun onFailure(call: okhttp3.Call, e: IOException) {
@@ -161,6 +125,7 @@ class EditActivity : AppCompatActivity() {
             run(){
                 runOnUiThread(Runnable {
                     run(){
+
                         val tableLayout = findViewById<TableLayout>(R.id.table_edit)
 
                         val rowLayoutParams = TableLayout.LayoutParams(
@@ -170,12 +135,11 @@ class EditActivity : AppCompatActivity() {
                         val temp = allergy_list.size/3
                         for (i : Int in 0 .. temp-1) {
                             var tr = TableRow(this@EditActivity)
-                            tr.setLayoutParams(
-                                TableRow.LayoutParams(
-                                    TableRow.LayoutParams.FILL_PARENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                                )
+                            val textViewLayoutParams = TableRow.LayoutParams(
+                                TableRow.LayoutParams.FILL_PARENT,
+                                TableRow.LayoutParams.WRAP_CONTENT
                             )
+                            tr.setBackgroundColor(Color.WHITE)
                             var t1 = CheckBox(this@EditActivity)
                             var t2 = TextView(this@EditActivity)
                             t2.setText(allergy_list[i*3])
@@ -183,11 +147,11 @@ class EditActivity : AppCompatActivity() {
                             t3.setText(allergy_list[i*3+1])
                             var t4 = TextView(this@EditActivity)
                             t4.setText(allergy_list[i*3+2])
-                            tr.addView(t1)
-                            tr.addView(t2)
-                            tr.addView(t3)
-                            tr.addView(t4)
-                            tableLayout.addView(tr)
+                            tr.addView(t1, textViewLayoutParams)
+                            tr.addView(t2, textViewLayoutParams)
+                            tr.addView(t3, textViewLayoutParams)
+                            tr.addView(t4, textViewLayoutParams)
+                            tableLayout.addView(tr, rowLayoutParams)
                         }
                     }
                 })

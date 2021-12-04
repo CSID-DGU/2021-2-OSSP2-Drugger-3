@@ -1,8 +1,10 @@
 package com.example.frontend
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.Instrumentation
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -44,13 +46,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val cookie = MySharedPreferences.getMyCookie(this)
-        MySharedPreferences.clearUser(this)
-        logout(cookie, this)
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("주의")
+            .setMessage("로그아웃 하시겠습니까?")
+            .setPositiveButton("아니오", DialogInterface.OnClickListener{ dialog, which->
+            })
+            .setNegativeButton("예", DialogInterface.OnClickListener({ dialog, which ->
+                val cookie = MySharedPreferences.getMyCookie(this)
+                MySharedPreferences.clearUser(this)
+                logout(cookie, this)
 
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-        finish()
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+                finish()
+            }))
+        builder.show()
 
         return super.onOptionsItemSelected(item)
     }
@@ -208,23 +218,21 @@ class MainActivity : AppCompatActivity() {
                         val temp = allergy_list.size/3
                         for (i : Int in 0 .. temp-1) {
                             var tr = TableRow(this@MainActivity)
-                            tr.setLayoutParams(
-                                TableRow.LayoutParams(
-                                    TableRow.LayoutParams.FILL_PARENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                                )
+                            val textViewLayoutParams = TableRow.LayoutParams(
+                                TableRow.LayoutParams.FILL_PARENT,
+                                TableRow.LayoutParams.MATCH_PARENT
                             )
+                            tr.setBackgroundColor(Color.WHITE)
                             var t1 = TextView(this@MainActivity)
                             t1.setText(allergy_list[i*3])
-                            t1
                             var t2 = TextView(this@MainActivity)
                             t2.setText(allergy_list[i*3+1])
                             var t3 = TextView(this@MainActivity)
                             t3.setText(allergy_list[i*3+2])
-                            tr.addView(t1)
-                            tr.addView(t2)
-                            tr.addView(t3)
-                            tableLayout.addView(tr)
+                            tr.addView(t1, textViewLayoutParams)
+                            tr.addView(t2, textViewLayoutParams)
+                            tr.addView(t3, textViewLayoutParams)
+                            tableLayout.addView(tr, rowLayoutParams)
                         }
                     }
                 })

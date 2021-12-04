@@ -19,37 +19,41 @@
         app:srcCompat="@drawable/logo"
         tools:ignore="ImageContrastCheck" />
 
-    <Button
-        android:id="@+id/button3"
+    <TextView
+        android:id="@+id/card"
         android:layout_width="190dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="117dp"
-        android:layout_marginBottom="10dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/rounding"
+        android:fontFamily="sans-serif"
+        android:gravity="center"
         android:text="약물 알레르기 카드"
+        android:textAlignment="center"
+        android:textColor="@color/white"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/tableLayout"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
         tools:ignore="MissingConstraints,TouchTargetSizeCheck" />
 
     <TableLayout
         android:id="@+id/tableLayout"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="33dp"
         android:layout_marginTop="10dp"
         android:backgroundTint="@color/actionColor"
         android:stretchColumns="0,1,2"
         app:layout_constraintEnd_toEndOf="@id/imageView"
         app:layout_constraintStart_toStartOf="@id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/button3"
+        app:layout_constraintTop_toBottomOf="@+id/card"
         tools:ignore="MissingConstraints">
-
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
             <TextView
                 android:id="@+id/textView30"
                 android:layout_width="60dp"
@@ -59,7 +63,6 @@
                 android:text="선택"
                 android:textSize="25sp"
                 android:textStyle="bold" />
-
             <TextView
                 android:id="@+id/textView40"
                 android:layout_width="120dp"
@@ -69,7 +72,6 @@
                 android:text="약물이름"
                 android:textSize="25sp"
                 android:textStyle="bold" />
-
             <TextView
                 android:id="@+id/textView41"
                 android:layout_width="120dp"
@@ -79,7 +81,6 @@
                 android:text="주성분"
                 android:textSize="25sp"
                 android:textStyle="bold" />
-
             <TextView
                 android:id="@+id/textView42"
                 android:layout_width="100dp"
@@ -90,6 +91,7 @@
                 android:textSize="25sp"
                 android:textStyle="bold" />
         </TableRow>
+
     </TableLayout>
 
     <ScrollView
@@ -100,15 +102,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tableLayout"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintTop_toBottomOf="@+id/tableLayout">
 
         <TableLayout
             android:id="@+id/table_edit"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/actionColor"
-            android:stretchColumns="0"
+            android:stretchColumns="0,1,2,3"
             app:layout_constraintBottom_toTopOf="@+id/plus"
             app:layout_constraintTop_toBottomOf="@+id/tableLayout"
             app:layout_constraintVertical_bias="0.0"
@@ -121,12 +122,15 @@
         android:id="@+id/plus"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginTop="180dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="300dp"
         android:contentDescription="@string/logo"
-        app:layout_constraintEnd_toStartOf="@+id/minus"
-        app:layout_constraintHorizontal_bias="0.898"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/minus"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tableLayout"
+        app:layout_constraintTop_toBottomOf="@id/scrollView_edit"
         app:srcCompat="@drawable/plus"
         tools:ignore="ImageContrastCheck" />
 
@@ -134,27 +138,12 @@
         android:id="@+id/minus"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="20dp"
         android:contentDescription="@string/logo"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.889"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/plus"
         app:layout_constraintTop_toBottomOf="@+id/scrollView_edit"
         app:srcCompat="@drawable/minus"
         tools:ignore="ImageContrastCheck" />
-
-    <Button
-        android:id="@+id/logout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="308dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="30dp"
-        android:text="Log out"
-        app:layout_constraintBottom_toTopOf="@+id/imageView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
