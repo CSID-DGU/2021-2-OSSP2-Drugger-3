@@ -3,6 +3,7 @@ package com.example.frontend
 import android.app.Activity
 import android.app.Instrumentation
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -12,6 +13,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.FileUtils
 import android.provider.MediaStore
+import android.text.Layout
 import android.util.Log
 import android.view.Gravity
 import android.view.View
@@ -20,6 +22,7 @@ import android.widget.*
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -112,13 +115,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         //로그아웃
-        binding.logout.setOnClickListener(){
-            val intent = Intent(this, LoginActivity::class.java)
-            MySharedPreferences.clearUser(this)
-            logout(cookie, this)
-            startActivity(intent)
-            finish()
-        }
+        /**binding.logout.setOnClickListener(){
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("주의")
+                .setMessage("로그아웃 하시겠습니까?")
+                .setPositiveButton("아니오", DialogInterface.OnClickListener{ dialog, which->
+                })
+                .setNegativeButton("예", DialogInterface.OnClickListener({ dialog, which ->
+                    val intent = Intent(this, LoginActivity::class.java)
+                    MySharedPreferences.clearUser(this)
+                    logout(cookie, this)
+                    startActivity(intent)
+                    finish()
+                }))
+            builder.show()
+        }*/
     }
 
     private fun logout(cookie: String?, context: Context){
@@ -204,7 +215,7 @@ class MainActivity : AppCompatActivity() {
                         for (i : Int in 0 .. temp-1) {
                             var tr = TableRow(this@MainActivity)
                             val textViewLayoutParams = TableRow.LayoutParams(
-                                160,
+                                TableRow.LayoutParams.FILL_PARENT,
                                 TableRow.LayoutParams.MATCH_PARENT
                             )
                             tr.setBackgroundColor(Color.WHITE)
