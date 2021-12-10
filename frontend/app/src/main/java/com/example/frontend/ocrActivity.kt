@@ -155,7 +155,7 @@ class ocrActivity : AppCompatActivity() {
             .build()
 
         val request = Request.Builder()
-            .url("http://192.168.25.54:5000/ocr")
+            .url("http://34.125.3.13:8000/ocr")
             .post(body)
             .build()
         val client = OkHttpClient.Builder().build()
