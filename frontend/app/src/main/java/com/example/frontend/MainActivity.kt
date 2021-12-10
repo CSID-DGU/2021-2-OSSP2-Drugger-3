@@ -257,9 +257,18 @@ class MainActivity : AppCompatActivity() {
         }
         if(permissionList.isNotEmpty()){
             ActivityCompat.requestPermissions(this, permissionList.toTypedArray(), PERMISSION_REQUEST)
-            return false;
         }
-        return true;
+        //재검사
+        for(permission in permissions){
+            val result = ContextCompat.checkSelfPermission(this, permission)
+            if(result != PackageManager.PERMISSION_GRANTED){
+                permissionList.add(permission)
+            }
+        }
+        if(permissionList.isNotEmpty()){
+            return false
+        }
+        return true
     }
 
     override fun onRequestPermissionsResult(
