@@ -40,9 +40,8 @@ class EditActivity : AppCompatActivity() {
         showAllergy()
 
         binding.plus.setOnClickListener(){
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, AddActivity::class.java)
             startActivity(intent)
-            finish()
         }
         binding.minus.setOnClickListener(){
             val builder = AlertDialog.Builder(this)

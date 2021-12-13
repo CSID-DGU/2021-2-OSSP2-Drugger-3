@@ -37,10 +37,12 @@ class JoinActivity : AppCompatActivity() {
             //미입력 처리
             if(userId.isEmpty() || userId.isBlank() || userPw.isEmpty() || userPw.isBlank()){
                 Toast.makeText(this, "입력을 완료해주세요.", Toast.LENGTH_SHORT).show()
+            }else{
+                join(userId, userPw, this)
             }
 
             //request login
-            join(userId, userPw, this)
+
         }
     }
 
