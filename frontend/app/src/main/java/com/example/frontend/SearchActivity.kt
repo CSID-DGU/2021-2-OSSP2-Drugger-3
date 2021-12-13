@@ -39,8 +39,8 @@ class SearchActivity : AppCompatActivity() {
 
         val cookie = MySharedPreferences.getMyCookie(this)
 
-        //val searchTargets = intent.getStringArrayListExtra("search") //Main 검색 or OCR 스캔 검색
-        val searchTargets = arrayListOf<String>("낙센", "아스피린", "게보린", "타이레놀")
+        val searchTargets = intent.getStringArrayListExtra("search") //Main 검색 or OCR 스캔 검색
+        //val searchTargets = arrayListOf<String>("낙센", "아스피린", "게보린", "타이레놀")
 
         if(searchTargets != null){
             //request & load to UI by Thread

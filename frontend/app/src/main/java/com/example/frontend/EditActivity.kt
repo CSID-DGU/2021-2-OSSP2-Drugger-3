@@ -85,6 +85,7 @@ class EditActivity : AppCompatActivity() {
                 json.put("Symptom", symptom.text.toString())
                 print(json.toString())
                 json_array.put(json)
+                count++
             }
         }
         val body = RequestBody.create(JSON, json_array.toString())
@@ -105,7 +106,6 @@ class EditActivity : AppCompatActivity() {
                     Log.d("connection", "success")
                     if (response.isSuccessful) {
                         val response = response.body?.string()
-                        count++
                         print("response : ")
                         println(response)
                     }

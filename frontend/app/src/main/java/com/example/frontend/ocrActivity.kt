@@ -96,7 +96,7 @@ class ocrActivity : AppCompatActivity() {
                 //inputText -> searchActivity로 전달
                 val resultArr = inputText.split("\n")
                 val intent = Intent(this, SearchActivity::class.java)
-                intent.putExtra("input", ArrayList(resultArr))
+                intent.putExtra("search", ArrayList(resultArr))
                 startActivity(intent)
             }
         }
