@@ -98,6 +98,7 @@ class ocrActivity : AppCompatActivity() {
                 val intent = Intent(this, SearchActivity::class.java)
                 intent.putExtra("search", ArrayList(resultArr))
                 startActivity(intent)
+                finish()
             }
         }
     }

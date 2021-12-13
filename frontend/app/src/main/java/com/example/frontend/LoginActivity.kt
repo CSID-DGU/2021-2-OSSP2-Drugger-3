@@ -46,10 +46,10 @@ class LoginActivity : AppCompatActivity() {
                 //미입력 처리
                 if (userId.isEmpty() || userId.isBlank() || userPw.isEmpty() || userPw.isBlank()) {
                     Toast.makeText(this, "입력을 완료해주세요.", Toast.LENGTH_SHORT).show()
+                }else {
+                    //request login
+                    login(userId, userPw, this)
                 }
-
-                //request login
-                login(userId, userPw, this)
             }
         }
     }

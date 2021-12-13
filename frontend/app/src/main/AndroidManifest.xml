@@ -46,6 +46,9 @@
             android:name=".EditActivity"
             android:exported="false" />
         <activity
+            android:name=".AddActivity"
+            android:exported="false" />
+        <activity
             android:name=".SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">

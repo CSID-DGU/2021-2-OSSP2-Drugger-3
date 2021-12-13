@@ -112,6 +112,7 @@ class MainActivity : AppCompatActivity() {
                 val intent = Intent(this, SearchActivity::class.java)
                 intent.putStringArrayListExtra("search", search)
                 startActivity(intent)
+                finish()
             }
         }
 
@@ -120,6 +121,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, EditActivity::class.java)
             intent.putExtra("allergyList", allergy_list)
             startActivity(intent)
+            finish()
         }
 
         //카메라 아이콘 클릭
