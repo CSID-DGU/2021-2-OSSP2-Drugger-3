@@ -36,14 +36,21 @@ class EditActivity : AppCompatActivity() {
 
         allergy_list = intent.getSerializableExtra("allergyList") as ArrayList<String>
 
+        val btnPlus = findViewById<ImageView>(R.id.plus)
+        btnPlus.setOnClickListener() {
+            val intent = Intent(this, AddActivity::class.java)
+            startActivity(intent)
+        }
+
         val cookie = MySharedPreferences.getMyCookie(this)
         showAllergy()
 
         binding.plus.setOnClickListener(){
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, AddActivity::class.java)
             startActivity(intent)
             finish()
         }
+
         binding.minus.setOnClickListener(){
             val builder = AlertDialog.Builder(this)
             builder.setTitle("주의")

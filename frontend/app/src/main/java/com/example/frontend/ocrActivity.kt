@@ -53,7 +53,6 @@ class ocrActivity : AppCompatActivity() {
         val strImageUri = intent.getStringExtra("URI")
         val imageUri = Uri.parse(strImageUri)
 
-        //실제 코드
 
         binding.inputImg.setImageURI(imageUri)
         //ImageProcessing
