@@ -10,7 +10,6 @@ backend/ELK/logstash/pipeline
 # Covers files to be ignored for android development using Android Studio.
 
 # Built application files
-*.apk
 *.ap_
 *.aab
 
